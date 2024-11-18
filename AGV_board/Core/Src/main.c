@@ -100,6 +100,7 @@ void canTX(void)
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
 
   /* USER CODE END 1 */
@@ -153,7 +154,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		// 目前还懒得丢到定时器中断�?
+		// 目前还懒得丢到定时器中断�??
 		//HAL_Delay(4);
 	  
 	   //briter_encoder_set_CAN_ID(&steering_wheel.directive_part.encoder.briter_encoder,0x10);
