@@ -363,7 +363,6 @@
           "../APP",
           "../task",
           "../refree",
-          ".cmsis/include",
           "RTE/_AGV_Board"
         ],
         "libList": [],

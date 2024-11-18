@@ -220,6 +220,10 @@ public:
     inline float Get_Target_Yaw_Angle();
     inline float Get_Target_Pitch_Angle();
     inline float Get_Gimbal_Head_Angle();
+    inline float Get_Gimbal_Speed_X();
+    inline float Get_Gimbal_Speed_Y();
+    inline void Set_Gimbal_Speed_X(float __Gimbal_Speed_X);
+    inline void Set_Gimbal_Speed_Y(float __Gimbal_Speed_Y);
     inline Enum_Gimbal_Control_Type Get_Gimbal_Control_Type();
     inline void Set_Gimbal_Control_Type(Enum_Gimbal_Control_Type __Gimbal_Control_Type);
     inline void Set_Target_Yaw_Angle(float __Target_Yaw_Angle);
@@ -236,6 +240,11 @@ protected:
     float Min_Yaw_Angle = -180.0f;
     // yaw轴最大值
     float Max_Yaw_Angle = 180.0f;
+
+    //云台坐标系速度
+    float gimbal_velocity_x=0;
+    float gimbal_velocity_y=0;
+
 
     // yaw总角度
     float Yaw_Total_Angle;
@@ -270,6 +279,33 @@ protected:
 /* Exported variables --------------------------------------------------------*/
 
 /* Exported function declarations --------------------------------------------*/
+/**
+ * @brief 返回云台坐标系速度
+ * 
+ * @return float 
+ */
+float Class_Gimbal::Get_Gimbal_Speed_X()
+{
+    return (gimbal_velocity_x);
+}
+
+float Class_Gimbal::Get_Gimbal_Speed_Y()
+{
+    return (gimbal_velocity_y);
+}
+
+void Class_Gimbal::Set_Gimbal_Speed_X(float __Gimbal_Speed_X)
+{
+    gimbal_velocity_x = __Gimbal_Speed_X;
+}
+
+void Class_Gimbal::Set_Gimbal_Speed_Y(float __Gimbal_Speed_Y)
+{
+    gimbal_velocity_y = __Gimbal_Speed_Y;
+}
+
+
+
 Enum_Gimbal_Control_Type
 Class_Gimbal::Get_Gimbal_Control_Type()
 {
