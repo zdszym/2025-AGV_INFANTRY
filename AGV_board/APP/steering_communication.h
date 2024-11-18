@@ -64,7 +64,9 @@ typedef struct
 	uint8_t boundary;
 }steering_communication_queue_t;
 #define RAD_TO_8191 8191.0f / PI / 2
-#define VEL2RPM 1.909859f 
+#define wheel_diameter 0.12000000f			  // 轮子直径，单位为m
+#define RPM2VEL (wheel_diameter * PI) / 60.0f //
+#define VEL2RPM 60.0 / (wheel_diameter * PI)
 void steering_communication_init(void);
 STEERING_COMMUNICATION_RETURN_T steering_communication_rx_handler(uint32_t extid, uint8_t data1[]);
 STEERING_COMMUNICATION_RETURN_T steering_communication_SubscribeList_Scheduler(steering_wheel_t *steering);

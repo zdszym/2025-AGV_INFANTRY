@@ -51,7 +51,7 @@ static uint32_t cnt=0;
 if(htim->Instance==TIM2)
 {
 	cnt++;
-		buzzer_taskScheduler(&buzzer);
+		//buzzer_taskScheduler(&buzzer);
 	        //buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
         if(cnt>100)
 	  {
