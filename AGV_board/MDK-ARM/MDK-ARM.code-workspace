@@ -22,7 +22,13 @@
                 "command": "extension.execute",
                 "priority": 4
             }
-        ]
+        ],
+        "files.associations": {
+            "chassis_power_control.h": "c",
+            "sw_control_task.h": "c",
+            "steering_wheel.h": "c",
+            "stdint.h": "c"
+        }
     },
     "extensions": {}
 }

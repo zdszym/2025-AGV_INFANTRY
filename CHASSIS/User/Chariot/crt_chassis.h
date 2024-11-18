@@ -449,9 +449,9 @@ void Class_Tricycle_Chassis::Set_Velocity_X_Max(float __Velocity_X_Max)
 }
 
 
-#define wheel_diameter 12.000000f   // ÂÖ×ÓÖ±¾¶
-#define half_width 15.95f           // 25.000000f		x方向为宽
-#define half_length 16.0f           // 35.000000f
+#define wheel_diameter 0.12000000f   // 轮子直径，单位为m
+#define half_width 0.1595f           // 25.000000f		x方向为宽   单位为m
+#define half_length 0.160f           // 35.000000f                 单位为m
 #define ROTATION_CENTER_OFFSET 0.0f // 旋转中心位置偏移量，现在只有y方向上的偏移，且向y负方向偏移，这个偏移量为绝对值
 
 #define THETA_A atan((half_length + ROTATION_CENTER_OFFSET) / half_width) // 转向轮在坐标系下与y轴的夹角（锐角）
@@ -466,16 +466,17 @@ void Class_Tricycle_Chassis::Set_Velocity_X_Max(float __Velocity_X_Max)
 
 #define PI 3.141593f
 #define PI2 2 * PI
-#define RPM2RAD 0.104720f                // ×ªËÙ×ª½ÇËÙ¶È		1 rpm = 2pi/60 rad/s
-#define RPM2VEL 0.523599f                // ×ªËÙ×ªÏßËÙ¶È		vel = rpn*pi*D/60  cm/s
-#define VEL2RPM 1.909859f                // ÏßËÙ¶È×ª×ª¶È
-#define M2006_REDUCTION_RATIO 36.000000f // ³ÝÂÖÏä¼õËÙ±È
-#define M3508_REDUCTION_RATIO 19.000000f // ³ÝÂÖÏä¼õËÙ±È
+#define RPM2RAD 0.104720f                // 	
+#define RPM2VEL (wheel_diameter*PI)/60.0f // 
+#define VEL2RPM 60.0/(wheel_diameter*PI)
+#define M2006_REDUCTION_RATIO 36.000000f // 
+#define M3508_REDUCTION_RATIO 19.000000f // 
 #define GM6020_ENCODER_ANGLE 8192.0f
 
-#define MAX_MOTOR_SPEED 500                 // µç»ú×î´ó×ªËÙ£¬ºê¶¨Òå·½±ãÐÞ¸Ä   ·¶Î§0 - 10000   15336
-#define MAX_BASE_LINEAR_SPEED 120.817f      // µ×ÅÌ×î´óÆ½ÒÆËÙ¶È£¬µ¥Î»cm/s
-#define MAX_BASE_ROTATIONAL_SPEED 7.260570f // µ×ÅÌ×î´óÐý×ªËÙ¶È£¬µ¥Î»rad/s
+#define MAX_MOTOR_SPEED 500                 // 
+
+#define MAX_BASE_LINEAR_SPEED 120.817f      // 
+#define MAX_BASE_ROTATIONAL_SPEED 7.260570f // 
 #define NORMAL_LINEAR_SPEED 70.0f
 #define NORMAL_ROTATIONAL_SPEED 0.5f
 

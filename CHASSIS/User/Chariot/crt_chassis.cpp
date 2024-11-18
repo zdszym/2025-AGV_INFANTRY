@@ -174,6 +174,7 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 #endif
 #ifdef steering_wheel
 
+    //单位为m/s
     float Chassis_Vr_A = Target_Omega * R_A;
     float Chassis_Vr_B = Target_Omega * R_B;
     float Chassis_Vr_C = Target_Omega * R_C;
@@ -218,7 +219,7 @@ void Class_Tricycle_Chassis::Speed_Resolution()
         }
 
         // 计算舵向角度，弧度制单位，范围-PI到PI
-        Target_Steer_Angle_Rad[i] = atan2(Vy, Vx);
+        Target_Steer_Angle_Rad[i] = My_atan(Vy, Vx);
 
         // 计算轮子线速度
         float linear_vel = sqrt(Vx * Vx + Vy * Vy);
@@ -388,20 +389,20 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
         speed_D = (int)(speed_D);
     }
     // 计算A轮速度分量
-    float vx_A = speed_A * cos(actual_angle_A_rad) / VEL2RPM;
-    float vy_A = speed_A * sin(actual_angle_A_rad) / VEL2RPM;
+    float vx_A = speed_A * cos(actual_angle_A_rad) *RPM2VEL;
+    float vy_A = speed_A * sin(actual_angle_A_rad) *RPM2VEL;
 
     // 计算B轮速度分量
-    float vx_B = speed_B * cos(actual_angle_B_rad) / VEL2RPM;
-    float vy_B = speed_B * sin(actual_angle_B_rad) / VEL2RPM;
+    float vx_B = speed_B * cos(actual_angle_B_rad) *RPM2VEL;
+    float vy_B = speed_B * sin(actual_angle_B_rad) *RPM2VEL;
 
     // 计算C轮速度分量
-    float vx_C = speed_C * cos(actual_angle_C_rad) / VEL2RPM;
-    float vy_C = speed_C * sin(actual_angle_C_rad) / VEL2RPM;
+    float vx_C = speed_C * cos(actual_angle_C_rad) *RPM2VEL;
+    float vy_C = speed_C * sin(actual_angle_C_rad) *RPM2VEL;
 
     // 计算D轮速度分量
-    float vx_D = speed_D * cos(actual_angle_D_rad) / VEL2RPM;
-    float vy_D = speed_D * sin(actual_angle_D_rad) / VEL2RPM;
+    float vx_D = speed_D * cos(actual_angle_D_rad) *RPM2VEL;
+    float vy_D = speed_D * sin(actual_angle_D_rad) *RPM2VEL;
 
 // 应用功率限制
 #ifdef POWER_LIMIT
