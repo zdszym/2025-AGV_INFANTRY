@@ -1,8 +1,8 @@
 agv_board\buzzer.o: ..\APP\buzzer.c
 agv_board\buzzer.o: ..\APP\buzzer.h
 agv_board\buzzer.o: ../BSP/buzzer_bsp.h
-agv_board\buzzer.o: D:\software\keil5\ARM\ARMCC\Bin\..\include\stdint.h
-agv_board\buzzer.o: D:\software\keil5\ARM\ARMCC\Bin\..\include\math.h
+agv_board\buzzer.o: E:\software\keil5\ARM\ARMCC\Bin\..\include\stdint.h
+agv_board\buzzer.o: E:\software\keil5\ARM\ARMCC\Bin\..\include\math.h
 agv_board\buzzer.o: ../Core/Inc/tim.h
 agv_board\buzzer.o: ../Core/Inc/main.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
@@ -18,7 +18,7 @@ agv_board\buzzer.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
 agv_board\buzzer.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-agv_board\buzzer.o: D:\software\keil5\ARM\ARMCC\Bin\..\include\stddef.h
+agv_board\buzzer.o: E:\software\keil5\ARM\ARMCC\Bin\..\include\stddef.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h
 agv_board\buzzer.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h
