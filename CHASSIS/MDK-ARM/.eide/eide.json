@@ -258,6 +258,9 @@
           },
           {
             "path": "../User/Device/GraphicsSendTask.cpp"
+          },
+          {
+            "path": "../User/Device/dvc_agvboard.cpp"
           }
         ],
         "folders": []
@@ -419,16 +422,16 @@
       }
     ]
   },
-  "outDir": "..\\MDK-ARM",
-  "deviceName": "STM32F407IGHx",
-  "packDir": ".pack/Keil/STM32F4xx_DFP.2.14.0",
+  "outDir": "build",
+  "deviceName": null,
+  "packDir": null,
   "miscInfo": {
-    "uid": "85c96ec307b268da1692ba450d60b381"
+    "uid": "edb6cb19c3067bab6c899affb168d0e4"
   },
   "targets": {
     "infantry": {
       "excludeList": [],
-      "toolchain": "AC6",
+      "toolchain": "AC5",
       "compileConfig": {
         "cpuType": "Cortex-M4",
         "floatingPointHardware": "single",
@@ -471,7 +474,7 @@
               "id": 1,
               "mem": {
                 "startAddr": "0x20000000",
-                "size": "0x1c000"
+                "size": "0x20000"
               },
               "isChecked": true,
               "noInit": false
@@ -480,8 +483,8 @@
               "tag": "IRAM",
               "id": 2,
               "mem": {
-                "startAddr": "0x2001c000",
-                "size": "0x4000"
+                "startAddr": "0x10000000",
+                "size": "0x10000"
               },
               "isChecked": true,
               "noInit": false
@@ -547,8 +550,8 @@
         "bin": "",
         "baseAddr": "",
         "cpuInfo": {
-          "vendor": "ST",
-          "cpuName": "STM32F407IG"
+          "vendor": "null",
+          "cpuName": "null"
         },
         "proType": 1,
         "speed": 8000,
@@ -558,7 +561,6 @@
       "custom_dep": {
         "name": "default",
         "incList": [
-          ".",
           "../Core/Inc",
           "../Drivers/STM32F4xx_HAL_Driver/Inc",
           "../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
@@ -579,6 +581,7 @@
           "../Middlewares/ST/ARM/DSP/Inc",
           "../Drivers/CMSIS/DSP/Include",
           "../User/Congfig",
+          ".cmsis/include",
           "RTE/_infantry"
         ],
         "libList": [],
@@ -588,33 +591,28 @@
         ]
       },
       "builderOptions": {
-        "AC6": {
-          "version": 3,
+        "AC5": {
+          "version": 4,
           "beforeBuildTasks": [],
           "afterBuildTasks": [],
           "global": {
-            "use-microLIB": false,
+            "use-microLIB": true,
             "output-debug-info": "enable"
           },
           "c/cpp-compiler": {
-            "optimization": "level-balanced",
-            "language-c": "c99",
-            "language-cpp": "c++11",
-            "link-time-optimization": false,
+            "optimization": "level-0",
             "one-elf-section-per-function": true,
-            "short-enums#wchar": true,
+            "c99-mode": true,
+            "C_FLAGS": "--diag_suppress=1 --diag_suppress=1295",
+            "CXX_FLAGS": "--diag_suppress=1 --diag_suppress=1295",
             "warnings": "no-warnings"
           },
-          "asm-compiler": {
-            "$use": "asm-auto"
-          },
+          "asm-compiler": {},
           "linker": {
             "output-format": "elf",
-            "misc-controls": "--diag_suppress=L6329",
             "xo-base": "",
             "ro-base": "",
-            "rw-base": "",
-            "$disableOutputTask": true
+            "rw-base": ""
           }
         }
       }

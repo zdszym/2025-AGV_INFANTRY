@@ -38,7 +38,7 @@ MDK-ARM/JLinkLog.txt
 *.uvguix.*
 *.mxproject
 
-
+.vscode/
 
 
 

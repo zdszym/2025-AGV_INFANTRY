@@ -84,15 +84,13 @@ uint8_t control_type;
 
 void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback(uint8_t *data)
 {
-    int16_t Chassis_Velocity_X, Chassis_Velocity_Y, Chassis_Omega;
-
-    Chassis_Velocity_X = (int16_t)(data[0] | (data[1] << 8));
-    Chassis_Velocity_Y = (int16_t)(data[2] | (data[3] << 8));
-    Chassis_Omega = (int16_t)(data[4] | (data[5] << 8));
+    float Chassis_Velocity_X=0, Chassis_Velocity_Y=0;
+    memcpy(&Chassis_Velocity_X, data, sizeof(float));
+    memcpy(&Chassis_Velocity_Y, data + 4, sizeof(float));
 
     Chassis.Set_Target_Velocity_X(float(Chassis_Velocity_X));
     Chassis.Set_Target_Velocity_Y(float(Chassis_Velocity_Y));
-    Chassis.Set_Target_Omega(float(Chassis_Omega));
+
 }
 #endif
 
