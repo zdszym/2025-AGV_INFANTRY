@@ -257,6 +257,9 @@ void TIM_CAN_PeriodElapsedCallback()
 #ifdef CHASSIS
     static uint8_t mod5 = 0;
     static uint8_t mod10 = 0;
+
+
+
     mod5++;
     mod10++;
     if (mod10 == 10)
@@ -283,7 +286,7 @@ void TIM_CAN_PeriodElapsedCallback()
         // {
         //     CAN1_Tx_Index = 0;
         // }
-        while (CAN1_Manage_Object.Message_Nums)
+        while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1))
         {
             CAN1_Tx_Index = (CAN1_Tx_Index + 1) % 4;
             CAN_Send_Data(Massage_queue[CAN1_Tx_Index].hcan, Massage_queue[CAN1_Tx_Index].ID, Massage_queue[CAN1_Tx_Index].Data, Massage_queue[CAN1_Tx_Index].Length);

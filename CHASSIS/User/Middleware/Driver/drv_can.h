@@ -69,8 +69,6 @@ extern "C"
         CAN_HandleTypeDef *CAN_Handler;
         Struct_CAN_Rx_Buffer Rx_Buffer;
         CAN_Call_Back Callback_Function;
-        // 避免三个邮箱同时塞满的情况
-        volatile int8_t Message_Nums;
     };
 
     struct CAN_Massage_Unit
