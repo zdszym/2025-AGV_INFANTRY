@@ -313,6 +313,46 @@ void Ist8310_IIC3_Callback(uint8_t* Tx_Buffer, uint8_t* Rx_Buffer, uint16_t Tx_L
  * @param Length 长度
  */
 #ifdef CHASSIS
+/**
+ * @brief 特殊，邮箱0发送完成回调函数，用于解决无法一次性发送四帧can消息的情况
+ * 
+ */
+int8_t length = 3;
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+    if(hcan->Instance==CAN1)
+    {
+        CAN1_Manage_Object.Message_Nums++;   
+    }
+    if(hcan->Instance==CAN2)
+    {
+        CAN2_Manage_Object.Message_Nums++;
+    }
+}
+
+void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+    if(hcan->Instance==CAN1)
+    {
+        CAN1_Manage_Object.Message_Nums++;   
+    }
+    if(hcan->Instance==CAN2)
+    {
+        CAN2_Manage_Object.Message_Nums++;
+    }
+}
+
+void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+    if(hcan->Instance==CAN1)
+    {
+        CAN1_Manage_Object.Message_Nums++;   
+    }
+    if(hcan->Instance==CAN2)
+    {
+        CAN2_Manage_Object.Message_Nums++;
+    }
+}
 void Referee_UART6_Callback(uint8_t *Buffer, uint16_t Length)
 {
     chariot.Referee.UART_RxCpltCallback(Buffer,Length);
@@ -329,6 +369,9 @@ void SuperCAP_UART1_Callback(uint8_t *Buffer, uint16_t Length)
 {
     chariot.Chassis.Supercap.UART_RxCpltCallback(Buffer);
 }
+
+
+
 #endif
 /**
  * @brief USB MiniPC回调函数

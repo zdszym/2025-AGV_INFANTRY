@@ -426,7 +426,7 @@
   "deviceName": null,
   "packDir": null,
   "miscInfo": {
-    "uid": "edb6cb19c3067bab6c899affb168d0e4"
+    "uid": "4afc80b3f557719ea8d15daafadaa8d8"
   },
   "targets": {
     "infantry": {
@@ -581,7 +581,6 @@
           "../Middlewares/ST/ARM/DSP/Inc",
           "../Drivers/CMSIS/DSP/Include",
           "../User/Congfig",
-          ".cmsis/include",
           "RTE/_infantry"
         ],
         "libList": [],
