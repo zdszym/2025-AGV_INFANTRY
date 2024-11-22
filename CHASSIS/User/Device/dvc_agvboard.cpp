@@ -61,7 +61,7 @@ uint8_t *allocate_tx_data(CAN_HandleTypeDef *hcan, Enum_Agv_Board_ID __CAN_ID)
         // {
         //     tmp_tx_data_ptr = &(CAN2_0x01E_Tx_Data[0]);
         // }
-        break;
+      //  break;
       
         }
     }
@@ -94,4 +94,9 @@ void Class_Agv_Board::Output(){
      memcpy(CAN_Tx_Data, &target_vx, sizeof(float));
      memcpy(CAN_Tx_Data + sizeof(float), &target_vy, sizeof(float));
 }
-
+//测试用
+float sum=0;
+void Class_Agv_Board::CAN_RxCpltCallback(uint8_t *Rx_Data)
+{
+    memcpy(&Rx_Data,& sum , sizeof(float));
+}

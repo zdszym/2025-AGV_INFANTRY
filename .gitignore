@@ -40,6 +40,9 @@ MDK-ARM/JLinkLog.txt
 
 .vscode/
 
+JLinkLog.txt
+*.log
+*.axf
 
 
 

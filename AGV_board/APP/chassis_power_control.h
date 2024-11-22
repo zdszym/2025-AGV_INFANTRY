@@ -103,7 +103,7 @@ uint8_t wheel_data_send(WheelComm_t *wheel_comm, steering_wheel_t *steering_whee
 //  void Chassis_Power_Control_Init(void);
 // extern Power_Calc_Data_t power_calc_data[4];
 void calculate_true_power(WheelComm_t *wheel_comm, chassis_power_control_t *chassis_power_control);
-uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint16_t Length);
+uint8_t CAN_Send_Data(uint16_t ID, uint8_t *Data,chassis_power_control_t *chassis_power_control);
 void wheel_data_unpack(WheelComm_t *wheel_comm, uint8_t rxdata[8]);
 void limit_power_data_unpack(chassis_power_control_t *chassis_power_control, uint8_t rxdata[8]);
 void wheel_data_init(WheelComm_t *wheel_comm, WheelID_e can_id);

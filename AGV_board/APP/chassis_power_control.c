@@ -342,22 +342,25 @@ void calculate_true_power(WheelComm_t *wheel_comm, chassis_power_control_t *chas
     chassis_power_control->scaled_directive_part_power_32 = chassis_power_control->scaled_power_coefficient_32 * chassis_power_control->expect_directive_part_power_32;
     chassis_power_control->scaled_motion_part_power_32 = chassis_power_control->scaled_power_coefficient_32 * chassis_power_control->expect_motion_part_power_32;
 }
-// uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint16_t Length)
-// {
-//     CAN_TxHeaderTypeDef tx_header;
-//     uint32_t used_mailbox;
+//测试用一下，只是发个总功率,id 0x02E
+uint8_t CAN_Send_Data(uint16_t ID, uint8_t *Data,chassis_power_control_t *chassis_power_control)
+{
+    CAN_TxHeaderTypeDef tx_header;
+    uint32_t used_mailbox;
 
-//     // 检测传参是否正确
-//     assert_param(hcan != NULL);
+    // 检测传参是否正确
+    assert_param(hcan != NULL);
 
-//     tx_header.StdId = ID;
-//     tx_header.ExtId = 0;
-//     tx_header.IDE = 0;
-//     tx_header.RTR = 0;
-//     tx_header.DLC = Length;
+    tx_header.StdId = ID;
+    tx_header.ExtId = 0;
+    tx_header.IDE = 0;
+    tx_header.RTR = 0;
+    tx_header.DLC = 8;
+memcpy(&Data, &chassis_power_control->expect_total_power_32, 4);
+    
+ return (HAL_CAN_AddTxMessage(&hcan2, &tx_header, Data, &used_mailbox));
+}
 
-//     return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
-// }
 void wheel_data_init(WheelComm_t *wheel_comm, WheelID_e can_id)
 {
     wheel_comm->tx_header.StdId = can_id;

@@ -58,7 +58,7 @@
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
-
+extern float sum; //用于测试
 /* Private variables ---------------------------------------------------------*/
 
 uint32_t init_finished =0 ;
@@ -113,6 +113,11 @@ void Chassis_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
             
         }
         break;
+					 case (0x20E):
+    {
+        chariot.Chassis.Agv_Board[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
+    }
+    break;
     }
 }
 #endif
@@ -151,6 +156,7 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         
     }
     break;
+	
 	}
 }
 #endif
@@ -545,6 +551,11 @@ extern "C" void Task_Init()
         if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
             Init_Cnt=10;
         GraphicSendtask();
+         uint16_t Chassis_Power_Max;
+
+    Chassis_Power_Max =chariot.Referee.Get_Chassis_Power_Max();
+		printf("%f,%f\n",Chassis_Power_Max,sum);
+        HAL_Delay(10);
     #endif
 }
 

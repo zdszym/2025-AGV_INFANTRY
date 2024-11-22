@@ -34,9 +34,9 @@ inline void Set_k1(float _k1);//设置功率缩放系数k1;
 inline void Set_k2(float _k2);//设置功率缩放系数k2;
 inline float Get_k1();//获取功率缩放系数k1;
 inline float Get_k2();//获取功率缩放系数k2;
-
+void CAN_RxCpltCallback(uint8_t *Rx_Data);//测试用，接受舵小板发送给的总功率
 void Output();//数据处理，发送数据
-;
+float Actual_Power=0.0f;
 
 protected:
 

@@ -4,6 +4,8 @@
 steering_wheel_t steering_wheel;
 steering_wheel_t *steering_wheel_p = &steering_wheel;
     int16_t probe;
+    uint8_t total_power;
+extern chassis_power_control_t chassis_power_control;
 void SW_control_task(void)
 {
 
@@ -19,6 +21,7 @@ wheel_data_send(&wheel_data[0],&steering_wheel);
 #endif
 #ifdef AGV_BOARD_B
 wheel_data_send(&wheel_data[1],&steering_wheel);
+//CAN_Send_Data(0x20E,&total_power,&chassis_power_control);
 #endif
 #ifdef AGV_BOARD_C
 wheel_data_send(&wheel_data[2],&steering_wheel);

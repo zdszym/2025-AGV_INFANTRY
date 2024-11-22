@@ -607,7 +607,12 @@ void steering_wheel_dataprocess(steering_wheel_t *_steering_wheel,uint8_t rx_dat
      memcpy(&_steering_wheel->velocity_y, &rx_data[4], 4);
 	 //将矢量速度转化为标量速度和角度
 	 velocity= sqrtf(_steering_wheel->velocity_x*_steering_wheel->velocity_x+_steering_wheel->velocity_y*_steering_wheel->velocity_y)*VEL2RPM;
-   theta = My_atan(_steering_wheel->velocity_y,_steering_wheel->velocity_x)*RAD_TO_8191;
+   theta = My_atan(_steering_wheel->velocity_y,_steering_wheel->velocity_x);
+	if(theta>=-PI&&theta<=0)
+	{
+		theta+=PI;
+	}
+	theta*=RAD_TO_8191;
     Steering_Wheel_SetProtocolPosition(_steering_wheel, theta);
 	Steering_Wheel_SetProtocolSpeed(_steering_wheel,velocity);
 }
