@@ -350,10 +350,10 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
     float actual_angle_D_rad = Target_Steer_Angle_Rad[3] - (PI / 2.0f);
 
     // 获取各个电机的速度大小
-    float speed_A = Target_Wheel_Omega[0];
-    float speed_B = Target_Wheel_Omega[1];
-    float speed_C = Target_Wheel_Omega[2];
-    float speed_D = Target_Wheel_Omega[3];
+    float speed_A = -Target_Wheel_Omega[0];
+    float speed_B = -Target_Wheel_Omega[1];
+    float speed_C = -Target_Wheel_Omega[2];
+    float speed_D = -Target_Wheel_Omega[3];
 
     // 如果是刹车模式
     if (Target_Velocity_X==0&&Target_Velocity_Y==0&&Target_Omega==0)

@@ -171,7 +171,7 @@ void CAN_Init(CAN_HandleTypeDef *hcan, CAN_Call_Back Callback_Function)
     {
         CAN1_Manage_Object.CAN_Handler = hcan;
         CAN1_Manage_Object.Callback_Function = Callback_Function;
-        CAN1_Manage_Object.Message_Nums = 3;
+
         //         can_filter_mask_config(hcan, CAN_FILTER(0) | CAN_FIFO_0 | CAN_STDID | CAN_DATA_TYPE, 0x200 ,0x7F8);  //只接收0x200-0x207
         //         can_filter_mask_config(hcan, CAN_FILTER(1) | CAN_FIFO_1 | CAN_STDID | CAN_DATA_TYPE, 0x200, 0x7F8);
         can_filter_mask_config(hcan, CAN_FILTER(0) | CAN_FIFO_0 | CAN_STDID | CAN_DATA_TYPE, 0, 0);
@@ -181,7 +181,7 @@ void CAN_Init(CAN_HandleTypeDef *hcan, CAN_Call_Back Callback_Function)
     {
         CAN2_Manage_Object.CAN_Handler = hcan;
         CAN2_Manage_Object.Callback_Function = Callback_Function;
-        CAN2_Manage_Object.Message_Nums = 3;
+
         can_filter_mask_config(hcan, CAN_FILTER(14) | CAN_FIFO_0 | CAN_STDID | CAN_DATA_TYPE, 0, 0); // 只接收
         //	    can_filter_mask_config(hcan, CAN_FILTER(15) | CAN_FIFO_1 | CAN_EXTID | CAN_DATA_TYPE, 0x200, 0x7F8);
     }
@@ -207,8 +207,7 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint1
 {
     if (hcan->Instance == CAN1)
     {
-        if (CAN1_Manage_Object.Message_Nums > 0)
-        {
+
             CAN_TxHeaderTypeDef tx_header;
             uint32_t used_mailbox;
 
@@ -221,14 +220,13 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint1
             tx_header.RTR = 0;
             tx_header.DLC = Length;
 
-            CAN1_Manage_Object.Message_Nums--;
+
             return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
-        }
+        
     }
     if (hcan->Instance == CAN2)
     {
-        if (CAN2_Manage_Object.Message_Nums > 0)
-        {
+
             CAN_TxHeaderTypeDef tx_header;
             uint32_t used_mailbox;
 
@@ -241,9 +239,8 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint1
             tx_header.RTR = 0;
             tx_header.DLC = Length;
 
-            CAN2_Manage_Object.Message_Nums--;
             return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
-        }
+        
     }
     return 1;
 }
