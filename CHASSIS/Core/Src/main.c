@@ -26,7 +26,7 @@
 #include "usart.h"
 #include "usb_device.h"
 #include "gpio.h"
-
+//#include "dvc_referee.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "tsk_config_and_callback.h"
@@ -39,7 +39,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+extern float sum;
+//extern Class_Referee *Referee;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -61,7 +62,15 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//????
+char test[5];
+int fputc(int ch,FILE *f)
+{
+	uint8_t temp[1] = {ch};
 
+	HAL_UART_Transmit(&huart1,temp,1,2);
+	return ch;
+}
 /* USER CODE END 0 */
 
 /**
@@ -119,6 +128,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
