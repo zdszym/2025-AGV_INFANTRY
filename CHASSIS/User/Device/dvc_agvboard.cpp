@@ -98,5 +98,5 @@ void Class_Agv_Board::Output(){
 float sum=0;
 void Class_Agv_Board::CAN_RxCpltCallback(uint8_t *Rx_Data)
 {
-    memcpy(&Rx_Data,& sum , sizeof(float));
+    memcpy(&sum,Rx_Data, sizeof(float));
 }

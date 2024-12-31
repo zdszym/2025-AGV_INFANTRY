@@ -293,7 +293,7 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
 
 #endif
 }
-
+float last_angle[4];
 void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_ChassisCoordinate()
 {
     //     //数据初始化；更新
@@ -350,19 +350,24 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
     float actual_angle_D_rad = Target_Steer_Angle_Rad[3] - (PI / 2.0f);
 
     // 获取各个电机的速度大小
-    float speed_A = -Target_Wheel_Omega[0];
-    float speed_B = -Target_Wheel_Omega[1];
-    float speed_C = -Target_Wheel_Omega[2];
-    float speed_D = -Target_Wheel_Omega[3];
+    float speed_A = Target_Wheel_Omega[0];
+    float speed_B = Target_Wheel_Omega[1];
+    float speed_C = Target_Wheel_Omega[2];
+    float speed_D = Target_Wheel_Omega[3];
 
     // 如果是刹车模式
     if (Target_Velocity_X==0&&Target_Velocity_Y==0&&Target_Omega==0)
     {
         // 设置X形刹车角度
-        actual_angle_A_rad = 315.0f * PI / 180.0f; // A轮
-        actual_angle_B_rad = 225.0f * PI / 180.0f; // B轮
-        actual_angle_C_rad = 135.0f * PI / 180.0f; // C轮
-        actual_angle_D_rad = 45.0f * PI / 180.0f;  // D轮
+//        actual_angle_A_rad = 315.0f * PI / 180.0f; // A轮
+//        actual_angle_B_rad = 225.0f * PI / 180.0f; // B轮
+//        actual_angle_C_rad = 135.0f * PI / 180.0f; // C轮
+//        actual_angle_D_rad = 45.0f * PI / 180.0f;  // D轮
+	    
+	            actual_angle_A_rad = last_angle[0]; // A轮
+        actual_angle_B_rad = last_angle[1]; // B轮
+        actual_angle_C_rad = last_angle[2]; // C轮
+        actual_angle_D_rad = last_angle[3];  // D轮
     }
     // 速度限制
     int temp = 0;
@@ -434,6 +439,11 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
     Agv_Board[1].Output();
     Agv_Board[2].Output();
     Agv_Board[3].Output();
+    
+    last_angle[0]=actual_angle_A_rad;
+        last_angle[1]=actual_angle_B_rad;
+	      last_angle[2]=actual_angle_C_rad;
+		    last_angle[3]=actual_angle_D_rad;
 }
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

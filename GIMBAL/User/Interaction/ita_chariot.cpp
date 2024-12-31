@@ -332,14 +332,14 @@ void Class_Chariot::Control_Chassis()
             }
                         if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
                         {
-                           gimbal_velocity_y=1;
+                         //  gimbal_velocity_y=1;
             
                        }
             
                        if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
                        {
-                           gimbal_velocity_y=0;
-            							gimbal_velocity_x=0;
+//                           gimbal_velocity_y=0;
+//            							gimbal_velocity_x=0;
 
             
                        }
@@ -550,23 +550,23 @@ void Class_Chariot::Control_Booster()
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI)
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
             }
-            // else if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_PRESSED_FREE)
-            // {
-            //     Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-            // }
+             else if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_PRESSED_FREE)
+             {
+                 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+             }
         }
         else
         {
-            // if (DR16.Get_Wheel() > 0.9)
-            //     Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-            // if (DR16.Get_Wheel() < -0.9)
-            //     Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
+             if (DR16.Get_Wheel() > 0.9)
+                 Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
+             if (DR16.Get_Wheel() < -0.9)
+                 Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
 
-            // if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_MIDDLE_UP)
-            //     Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+             if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_MIDDLE_UP)
+                 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
 
-            // if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_UP_MIDDLE)
-            //     Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+             if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_UP_MIDDLE)
+                 Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
         }
     }
 }

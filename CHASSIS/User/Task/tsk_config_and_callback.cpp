@@ -78,6 +78,7 @@ Class_Serialplot serialplot;
  *
  * @param CAN_RxMessage CAN1收到的消息
  */
+ __fp16 test_k1,test_k2;
 #ifdef CHASSIS
 void Chassis_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 {
@@ -115,7 +116,10 @@ void Chassis_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         break;
 					 case (0x20E):
     {
-        chariot.Chassis.Agv_Board[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
+        //chariot.Chassis.Agv_Board[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
+	    memcpy(&sum,CAN_RxMessage->Data,4);
+	    memcpy(&test_k1,CAN_RxMessage->Data+4,2);
+	    memcpy(&test_k2,CAN_RxMessage->Data+6,2);
     }
     break;
     }
@@ -400,7 +404,7 @@ void Task1ms_TIM5_Callback()
         //统一打包发送
         TIM_CAN_PeriodElapsedCallback();
 
-        TIM_UART_PeriodElapsedCallback();
+        //TIM_UART_PeriodElapsedCallback();
         
         static int mod5 = 0;
         mod5++;
@@ -478,7 +482,8 @@ extern "C" void Task_Init()
     HAL_TIM_Base_Start_IT(&htim4);
     HAL_TIM_Base_Start_IT(&htim5);
 }
-
+float Chassis_Power;
+float remain_buff;
 /**
  * @brief 前台循环任务
  *
@@ -512,11 +517,11 @@ extern "C" void Task_Init()
 //        if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
 //            Init_Cnt=10;
 //        GraphicSendtask();
-//         uint16_t Chassis_Power_Max;
 
-//    Chassis_Power_Max =chariot.Referee.Get_Chassis_Power_Max();
-//		printf("%f,%f\n",Chassis_Power_Max,sum);
-//        HAL_Delay(10);
+    Chassis_Power =chariot.Referee.Get_Chassis_Power();
+    remain_buff=chariot.Referee.Get_Chassis_Energy_Buffer();
+		printf("%f,%f,%f,%f\r\n",Chassis_Power,remain_buff,test_k1,test_k2);
+        HAL_Delay(10);
     #endif
 }
 

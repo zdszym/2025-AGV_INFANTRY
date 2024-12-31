@@ -14,13 +14,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-
 #include "dvc_witahrs.h"
 #include "dvc_minipc.h"
 #include "dvc_imu.h"
 #include "dvc_lkmotor.h"
 #include "dvc_djimotor.h"
-
+#include "alg_filter.h"
 /* Exported macros -----------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
@@ -45,7 +44,7 @@ class Class_Gimbal_Yaw_Motor_GM6020 : public Class_DJI_Motor_GM6020
 public:
     // 陀螺仪获取云台角速度
     Class_IMU *IMU;
-
+    Class_Filter_Fourier filtered_target_angle;
     inline float Get_Trer_Rad_Yaw();
     inline float Get_True_Gyro_Yaw();
     inline float Get_True_Angle_Yaw();
@@ -96,7 +95,7 @@ class Class_Gimbal_Pitch_Motor_GM6020 : public Class_DJI_Motor_GM6020
 public:
     // 陀螺仪获取云台角速度
     Class_IMU *IMU;
-
+    Class_Filter_Fourier filtered_target_angle;
     inline float Get_True_Rad_Pitch();
     inline float Get_True_Gyro_Pitch();
     inline float Get_True_Angle_Pitch();
@@ -209,7 +208,7 @@ public:
     // pithc轴电机
     Class_Gimbal_Pitch_Motor_LK6010 Motor_Pitch_LK6010;
 
-    //离线判断标志
+    // 离线判断标志
     int Flag;
     int Pre_Flag;
 
@@ -234,17 +233,16 @@ public:
 protected:
     // 初始化相关常量
 
-    float Gimbal_Head_Angle = 140.86f*PI/180.0f;
+    float Gimbal_Head_Angle = 140.86f * PI / 180.0f;
     // 常量
     //  yaw轴最小值
     float Min_Yaw_Angle = -180.0f;
     // yaw轴最大值
     float Max_Yaw_Angle = 180.0f;
 
-    //云台坐标系速度
-    float gimbal_velocity_x=0;
-    float gimbal_velocity_y=0;
-
+    // 云台坐标系速度
+    float gimbal_velocity_x = 0;
+    float gimbal_velocity_y = 0;
 
     // yaw总角度
     float Yaw_Total_Angle;
@@ -281,8 +279,8 @@ protected:
 /* Exported function declarations --------------------------------------------*/
 /**
  * @brief 返回云台坐标系速度
- * 
- * @return float 
+ *
+ * @return float
  */
 float Class_Gimbal::Get_Gimbal_Speed_X()
 {
@@ -303,8 +301,6 @@ void Class_Gimbal::Set_Gimbal_Speed_Y(float __Gimbal_Speed_Y)
 {
     gimbal_velocity_y = __Gimbal_Speed_Y;
 }
-
-
 
 Enum_Gimbal_Control_Type
 Class_Gimbal::Get_Gimbal_Control_Type()
