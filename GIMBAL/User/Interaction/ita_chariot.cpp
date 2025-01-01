@@ -330,19 +330,19 @@ void Class_Chariot::Control_Chassis()
             {
                 Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_SPIN);
             }
-                        if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
-                        {
-                           gimbal_velocity_y=1;
+                    //     if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
+                    //     {
+                    //        gimbal_velocity_y=1;
             
-                       }
+                    //    }
             
-                       if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
-                       {
-                           gimbal_velocity_y=0;
-            							gimbal_velocity_x=0;
+                    //    if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
+                    //    {
+                    //        gimbal_velocity_y=0;
+            		// 					gimbal_velocity_x=0;
 
             
-                       }
+                    //    }
         }
     }
 

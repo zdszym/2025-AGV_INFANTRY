@@ -150,6 +150,7 @@ public:
     void CAN_Chassis_Tx_Gimbal_Callback();
     void TIM1msMod50_Gimbal_Communicate_Alive_PeriodElapsedCallback();
     void CAN_Chassis_Tx_Max_Power_Callback();
+    void CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data);;
 #elif defined(GIMBAL)
 
     inline void DR16_Offline_Cnt_Plus();

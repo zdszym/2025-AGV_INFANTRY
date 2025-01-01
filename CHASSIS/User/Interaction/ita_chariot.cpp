@@ -92,7 +92,62 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback(uint8_t *data)
     Chassis.Set_Target_Velocity_Y(float(Chassis_Velocity_Y));
 
 }
+ Enum_Chassis_Control_Type chassis_control_type;
+void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
+{
+     //目标角速度
+    float chassis_omega=0;
+    //底盘控制类型
+   
+    //底盘和云台夹角（弧度制）
+    float derta_angle;
+    //uint16_t  tmp_omega, tmp_gimbal_pitch;
+    //memcpy(&tmp_gimbal_pitch,&CAN_Manage_Object->Rx_Buffer.Data[5],sizeof(uint16_t));
+    memcpy(&control_type,&CAN_Manage_Object->Rx_Buffer.Data[0],sizeof(uint8_t));
+   // Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch,0,0x7FFF,-10.0f,30.0f);
+
+    chassis_control_type = (Enum_Chassis_Control_Type)(control_type & 0x03);
+    Sprint_Status = (Enum_Sprint_Status)(control_type>>2 & 0x01);
+//    Bulletcap_Status = (Enum_Bulletcap_Status)(control_type>>3 & 0x01);
+//    Fric_Status = (Enum_Fric_Status)(control_type>>4 & 0x01);
+//    MiniPC_Aim_Status = (Enum_MinPC_Aim_Status)(control_type>>5 & 0x01);
+//    MiniPC_Status = (Enum_MiniPC_Status)(control_type>>6 & 0x01);
+//    Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)(control_type>>7 & 0x01);
+    Chassis_Angle = Motor_Yaw.Get_Now_Radian();
+   derta_angle = Chassis_Angle - Reference_Angle + Offset_Angle;  
+
+       //设定底盘控制类型
+    Chassis.Set_Chassis_Control_Type(chassis_control_type);
+    
+    //底盘控制方案
+   if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
+   {
+      // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
+       chassis_omega=0.8;
+   }
+//    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
+//    {
+//        //随动yaw角度优化
+//        Chassis_Angle = Motor_Yaw.Get_Now_Radian();
+//        if(Chassis_Angle > PI)
+//            Chassis_Angle -= 2 * PI;
+//        else if(Chassis_Angle < -PI)
+//            Chassis_Angle += 2 * PI;
+//        //随动环
+//        PID_Chassis_Fllow.Set_Target(Reference_Angle);
+//        PID_Chassis_Fllow.Set_Now(Chassis_Angle);
+//        PID_Chassis_Fllow.TIM_Adjust_PeriodElapsedCallback();
+//        chassis_omega = -PID_Chassis_Fllow.Get_Out();
+//    }
+    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
+    {
+        chassis_omega = 0;
+    }
+    
+    Chassis.Set_Target_Omega(chassis_omega);
+}
 #endif
+
 
 /**
  * @brief can回调函数处理底盘发来的数据

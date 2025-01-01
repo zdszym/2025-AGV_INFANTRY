@@ -60,7 +60,7 @@
 /* Private types -------------------------------------------------------------*/
 extern float sum; //用于测试
 /* Private variables ---------------------------------------------------------*/
-
+float theory_power;
 uint32_t init_finished =0 ;
 bool start_flag=0;
 //机器人控制对象
@@ -115,7 +115,8 @@ void Chassis_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         break;
 					 case (0x20E):
     {
-        chariot.Chassis.Agv_Board[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
+        //chariot.Chassis.Agv_Board[1].CAN_RxCpltCallback(CAN_RxMessage->Data);
+			memcpy(&theory_power,CAN_RxMessage->Data,4);
     }
     break;
     }
@@ -139,6 +140,11 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
     case (0x150):  //留给上板通讯
     {
         chariot.CAN_Chassis_Rx_Gimbal_Callback(CAN_RxMessage->Data);
+    }
+    break;
+     case (0x152):  //留给上板通讯
+    {
+        chariot.CAN_Chassis_Rx_Gimbal_Callback_State(CAN_RxMessage->Data);
     }
     break;
     case (0x67):  //留给超级电容
@@ -224,16 +230,17 @@ void Gimbal_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         
     }
     break;
-    case (0x205)://保留can2对6020编码器的接口
+    case (0x206)://保留can2对6020编码器的接口
     {
         chariot.Gimbal.Motor_Yaw.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-    case (0x206):
+     case (0x205):
     {
-        
+        chariot.Gimbal.Motor_Pitch.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
+
 	}
 }
 #endif
@@ -377,7 +384,7 @@ void Task100us_TIM4_Callback()
  * @brief TIM5任务回调函数
  *
  */
-
+float actual=0;
 void Task1ms_TIM5_Callback()
 {
     init_finished++;
@@ -394,13 +401,17 @@ void Task1ms_TIM5_Callback()
         #ifdef GIMBAL
         chariot.FSM_Alive_Control.Reload_TIM_Status_PeriodElapsedCallback();
         #endif
-        chariot.TIM_Calculate_PeriodElapsedCallback();
-        
+
+			//printf("%.2f\n",theory_power);
+			int fuck=6;
+			//printf("%d\r\n",fuck);
+			        chariot.TIM_Calculate_PeriodElapsedCallback();
+
     /****************************** 驱动层回调函数 1ms *****************************************/ 
         //统一打包发送
         TIM_CAN_PeriodElapsedCallback();
 
-        TIM_UART_PeriodElapsedCallback();
+       // TIM_UART_PeriodElapsedCallback();
         
         static int mod5 = 0;
         mod5++;
@@ -512,11 +523,9 @@ extern "C" void Task_Init()
 //        if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
 //            Init_Cnt=10;
 //        GraphicSendtask();
-//         uint16_t Chassis_Power_Max;
-
-//    Chassis_Power_Max =chariot.Referee.Get_Chassis_Power_Max();
-//		printf("%f,%f\n",Chassis_Power_Max,sum);
-//        HAL_Delay(10);
+        		actual=chariot.Referee.Get_Chassis_Power();
+		printf("%f,%f\r\n",theory_power,actual);
+        //HAL_Delay(5);
     #endif
 }
 

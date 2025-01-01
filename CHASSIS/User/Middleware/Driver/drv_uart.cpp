@@ -112,7 +112,7 @@ uint8_t UART_Send_Data(UART_HandleTypeDef *huart, uint8_t *Data, uint16_t Length
 void TIM_UART_PeriodElapsedCallback()
 {
     // UART1超电通讯
-    UART_Send_Data(&huart1, UART1_Manage_Object.Tx_Buffer, 10);
+    //UART_Send_Data(&huart1, UART1_Manage_Object.Tx_Buffer, 10);
 }
 
 /**
@@ -170,7 +170,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
         UART6_Manage_Object.Rx_Length = Size;
         UART6_Manage_Object.Callback_Function(UART6_Manage_Object.Rx_Buffer, Size);
         HAL_UARTEx_ReceiveToIdle_DMA(huart, UART6_Manage_Object.Rx_Buffer, UART6_Manage_Object.Rx_Buffer_Length);
-				__HAL_DMA_DISABLE_IT(&hdma_usart6_rx, DMA_IT_HT);
+				//__HAL_DMA_DISABLE_IT(&hdma_usart6_rx, DMA_IT_HT);
     }
 }
 //void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
