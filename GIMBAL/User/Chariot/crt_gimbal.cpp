@@ -31,7 +31,7 @@ float test = -10;
  */
 void Class_Gimbal_Yaw_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
 {
-    
+
     switch (DJI_Motor_Control_Method)
     {
     case (DJI_Motor_Control_Method_OPENLOOP):
@@ -168,6 +168,9 @@ void Class_Gimbal_Yaw_Motor_GM6020::Transform_Angle()
     //     True_Angle_Yaw = IMU->Get_Angle_Yaw() + 180;
 }
 
+float angle_sum = 0; // 角度总和
+int count = 0;       // 当前计数
+
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -235,6 +238,25 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
     break;
     case (DJI_Motor_Control_Method_IMU_ANGLE):
     {
+
+        // filtered_target_angle.Set_Now(Target_Angle);
+        // filtered_target_angle.TIM_Adjust_PeriodElapsedCallback();
+        // Target_Angle=filtered_target_angle.Get_Out();
+
+        // PID_Angle.Set_Target(Target_Angle);
+        // 替换原来的filtered_target_angle相关代码
+        if (count < 10)
+        {
+            angle_sum += Target_Angle;
+            count++;
+            Target_Angle = angle_sum / count;
+        }
+        else
+        {
+            angle_sum = angle_sum - (angle_sum / 10) + Target_Angle;
+            Target_Angle = angle_sum / 10;
+        }
+
         PID_Angle.Set_Target(Target_Angle);
 
         if (IMU->Get_IMU_Status() == IMU_Status_DISABLE)
@@ -303,8 +325,8 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
  */
 void Class_Gimbal_Pitch_Motor_GM6020::Transform_Angle()
 {
-    True_Rad_Pitch =  -IMU->Get_Rad_Roll();
-    True_Gyro_Pitch =  -IMU->Get_Gyro_Pitch();
+    True_Rad_Pitch = -IMU->Get_Rad_Roll();
+    True_Gyro_Pitch = -IMU->Get_Gyro_Pitch();
     True_Angle_Pitch = RAD_TO_ANGEL(True_Rad_Pitch);
 }
 
@@ -427,6 +449,8 @@ void Class_Gimbal::Init()
 {
     // imu初始化
     Boardc_BMI.Init();
+
+    Motor_Pitch.filtered_target_angle.Init(-30, 40, Filter_Fourier_Type_LOWPASS, 20, 0, 1000, 4);
 
     // yaw轴电机
     // Motor_Yaw.PID_Angle.Init(0.0f, 0.0f, 0.0f, 0.0f, 100, 100);
