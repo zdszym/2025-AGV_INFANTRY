@@ -84,6 +84,8 @@ void Chassis_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 {
     switch (CAN_RxMessage->Header.StdId)
     {
+			
+		
         case (0x201):
         {
             chariot.Chassis.Motor_Wheel[0].CAN_RxCpltCallback(CAN_RxMessage->Data);
@@ -150,14 +152,15 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         chariot.CAN_Chassis_Rx_Gimbal_Callback_State(CAN_RxMessage->Data);
     }
     break;
-    case (0x67):  //留给超级电容
-    {
-        chariot.Chassis.Supercap.CAN_RxCpltCallback(CAN_RxMessage->Data);
-    }
-    break;
+
     case (0x205)://留给yaw电机编码器回传 用于底盘随动
     {
          chariot.Motor_Yaw.CAN_RxCpltCallback(CAN_RxMessage->Data);
+    }
+    break;
+		case (0x67):  //留给超级电容
+    {
+        chariot.Chassis.Supercap.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
     case (0x206):
@@ -530,7 +533,8 @@ float remain_buff;
 
     Chassis_Power =chariot.Referee.Get_Chassis_Power();
     remain_buff=chariot.Referee.Get_Chassis_Energy_Buffer();
-		printf("%f,%f,%f,%f\r\n",Chassis_Power,remain_buff,test_k1,test_k2);
+		//printf("%f,%f,%f,%f\r\n",Chassis_Power,remain_buff,test_k1,test_k2);
+        printf("%f,%f,%f,%f\r\n",Chassis_Power,sum,test_k1,test_k2);
         HAL_Delay(10);
     #endif
 }
