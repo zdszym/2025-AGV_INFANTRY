@@ -174,6 +174,9 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 #endif
 #ifdef steering_wheel
 
+    //test 
+//    float omega=0.5f;
+//    Set_Target_Omega(omega);
     //单位为m/s
     float Chassis_Vr_A = Target_Omega * R_A;
     float Chassis_Vr_B = Target_Omega * R_B;
@@ -186,11 +189,11 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 
     // 计算B轮的速度分量
     float Vy_B = Target_Velocity_Y + Chassis_Vr_B * cos(THETA_B);
-    float Vx_B = Target_Velocity_X - Chassis_Vr_B * sin(THETA_B);
+    float Vx_B = Target_Velocity_X + Chassis_Vr_B * sin(THETA_B);
 
     // 计算C轮的速度分量
     float Vy_C = Target_Velocity_Y + Chassis_Vr_C * cos(THETA_C);
-    float Vx_C = Target_Velocity_X + Chassis_Vr_C * sin(THETA_C);
+    float Vx_C = Target_Velocity_X - Chassis_Vr_C * sin(THETA_C);
 
     // 计算D轮的速度分量
     float Vy_D = Target_Velocity_Y - Chassis_Vr_D * cos(THETA_D);

@@ -19,7 +19,9 @@
 #include "alg_power_limit.h"
 
 /* Exported macros -----------------------------------------------------------*/
-
+//弧度转化
+#define RADPS_TO_RPM(x) ((x) * (60.0f / (2.0f * PI)))
+#define RAD_TO_ANGEL(x) ((x) * (180.0f / PI))
 /* Exported types ------------------------------------------------------------*/
 
 /**
