@@ -262,12 +262,12 @@ void Class_Booster::Output()
         Motor_Friction_Right.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
 
         // 热量控制
-        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
-        {
+//        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
+//        {
 
             Drvier_Angle = Now_Angle - 2.0f * PI / 8.0f * 5.0f; // 五连发
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
-        }
+//        }
         Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
         Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
 
@@ -295,16 +295,16 @@ void Class_Booster::Output()
         // Default_Driver_Omega = Referee->Get_Booster_17mm_1_Heat_CD() / 10.0f / 8.0f * 2.0f * PI;
 
         // 热量控制
-        if (abs(Driver_Omega) <= abs(Default_Driver_Omega))
-        {
+//        if (abs(Driver_Omega) <= abs(Default_Driver_Omega))
+//        {
             Motor_Driver.Set_Target_Omega(Driver_Omega);
-        }
-        else
-        {
-            float tmp_omega;
-            // tmp_omega = (Default_Driver_Omega - Driver_Omega) / Referee->Get_Booster_17mm_1_Heat_Max() * (FSM_Heat_Detect.Heat + 30.0f) + Driver_Omega;
-            Motor_Driver.Set_Target_Omega(tmp_omega);
-        }
+//        }
+//        else
+//        {
+//            float tmp_omega;
+//            // tmp_omega = (Default_Driver_Omega - Driver_Omega) / Referee->Get_Booster_17mm_1_Heat_Max() * (FSM_Heat_Detect.Heat + 30.0f) + Driver_Omega;
+//            Motor_Driver.Set_Target_Omega(tmp_omega);
+//        }
 
         Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
         Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);

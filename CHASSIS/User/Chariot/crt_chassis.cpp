@@ -249,8 +249,10 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     Slope_Omega.TIM_Calculate_PeriodElapsedCallback();
 
 #endif
+
     // 速度解算
     Speed_Resolution();
+
 #ifdef steering_wheel
     // 舵向底盘坐标系转化为轮组坐标系
     AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_ChassisCoordinate();

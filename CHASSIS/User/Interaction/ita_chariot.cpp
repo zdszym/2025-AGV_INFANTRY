@@ -40,10 +40,10 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
     Chassis.Init();
 
     // 底盘随动PID环初始化
-    PID_Chassis_Fllow.Init(6.0f, 0.0f, 0.1f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
+    PID_Chassis_Follow.Init(6.0f, 0.0f, 0.1f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
 
     // yaw电机canid初始化  只获取其编码器值用于底盘随动，并不参与控制
-    Motor_Yaw.Init(&hcan2, DJI_Motor_ID_0x205);
+    Motor_Yaw.Init(&hcan2, DJI_Motor_ID_0x206);
 
 #elif defined(GIMBAL)
 
@@ -84,13 +84,12 @@ uint8_t control_type;
 
 void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback(uint8_t *data)
 {
-    float Chassis_Velocity_X=0, Chassis_Velocity_Y=0;
+    float Chassis_Velocity_X = 0, Chassis_Velocity_Y = 0;
     memcpy(&Chassis_Velocity_X, data, sizeof(float));
     memcpy(&Chassis_Velocity_Y, data + 4, sizeof(float));
 
     Chassis.Set_Target_Velocity_X(float(Chassis_Velocity_X));
     Chassis.Set_Target_Velocity_Y(float(Chassis_Velocity_Y));
-
 }
 #endif
 
@@ -512,6 +511,16 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
 
     // 底盘给云台发消息
     CAN_Chassis_Tx_Gimbal_Callback();
+
+
+    if()
+    // 随动环
+    Chassis_Angle = Motor_Yaw.Get_Now_Angle();
+    PID_Chassis_Follow.Set_Target(Reference_Angle);
+    PID_Chassis_Follow.Set_Now(Chassis_Angle);
+    PID_Chassis_Follow.TIM_Adjust_PeriodElapsedCallback();
+    Chassis.Set_Target_Omega(PID_Chassis_Follow.Get_Out());
+
 #ifdef omni_wheel
     // 云台，随动掉线保护
     if (Motor_Yaw.Get_DJI_Motor_Status() == DJI_Motor_Status_ENABLE && Gimbal_Status == Gimbal_Status_ENABLE)
@@ -718,13 +727,13 @@ void Class_Chariot::TIM1msMod50_Gimbal_Communicate_Alive_PeriodElapsedCallback()
 void Class_Chariot::CAN_Chassis_Tx_Max_Power_Callback()
 {
     uint16_t Chassis_Power_Max;
-	float Chassis_Actual_Power;
+    float Chassis_Actual_Power;
     Chassis_Power_Max = Referee.Get_Chassis_Power_Max();
-	
-//	Chassis_Power_Max=40;
-Chassis_Actual_Power=Referee.Get_Chassis_Power();
+
+    //	Chassis_Power_Max=40;
+    Chassis_Actual_Power = Referee.Get_Chassis_Power();
     memcpy(CAN1_0x01E_Tx_Data, &Chassis_Power_Max, sizeof(uint16_t));
-	memcpy(CAN1_0x01E_Tx_Data+2,&Chassis_Actual_Power,sizeof(float));
+    memcpy(CAN1_0x01E_Tx_Data + 2, &Chassis_Actual_Power, sizeof(float));
 }
 #endif
 /**

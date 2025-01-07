@@ -117,7 +117,7 @@ public:
     // 获取yaw电机编码器值 用于底盘和云台坐标系的转换
     // 底盘随动PID环
     Class_DJI_Motor_GM6020 Motor_Yaw;
-    Class_PID PID_Chassis_Fllow;
+    Class_PID PID_Chassis_Follow;
 
 #endif
 
@@ -206,8 +206,8 @@ protected:
     Struct_CAN_Manage_Object *CAN_Manage_Object = &CAN2_Manage_Object;
 
 #ifdef CHASSIS
-    // 底盘标定参考正方向角度(数据来源yaw电机)
-    float Reference_Angle = 2.13223338f;
+    // 底盘标定参考正方向角度(数据来源yaw电机)单位°
+    float Reference_Angle = 140.86f;
     // 小陀螺云台坐标系稳定偏转角度 用于矫正
     float Offset_Angle = 0.0f; // 7.5°
     // 底盘转换后的角度（数据来源yaw电机）
