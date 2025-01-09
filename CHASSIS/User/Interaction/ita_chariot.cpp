@@ -40,7 +40,7 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
     Chassis.Init();
 
     // 底盘随动PID环初始化
-    PID_Chassis_Follow.Init(6.0f, 0.0f, 0.1f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
+    PID_Chassis_Follow.Init(0.1f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
 
     // yaw电机canid初始化  只获取其编码器值用于底盘随动，并不参与控制
     Motor_Yaw.Init(&hcan2, DJI_Motor_ID_0x206);
@@ -122,7 +122,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
         // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
-        chassis_omega = PI*2;
+        chassis_omega = PI * 2;
     }
     //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     //    {
@@ -554,6 +554,25 @@ void Class_Chariot::CAN_Chassis_Tx_Gimbal_Callback()
     memcpy(CAN2_Chassis_Tx_Gimbal_Data + 4, &Shooter_Barrel_Cooling_Value, sizeof(uint16_t));
 }
 #endif
+
+float OptimizeAngle(float target_angle, float current_angle)
+{
+    float angle_error = target_angle - current_angle;
+
+    // 标准化到[0, 360)范围
+    while (angle_error > 360.0f)
+        angle_error -= 360.0f;
+    while (angle_error < 0.0f)
+        angle_error += 360.0f;
+
+    // 选择最短路径
+    if (angle_error > 180.0f)
+        angle_error -= 360.0f;
+    else if (angle_error < -180.0f)
+        angle_error += 360.0f;
+
+    return current_angle + angle_error;
+}
 /**
  * @brief 计算回调函数
  *
@@ -566,14 +585,17 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
     // 底盘给云台发消息
     CAN_Chassis_Tx_Gimbal_Callback();
 
+    if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
+    {
+        // 随动环
+        Chassis_Angle = Motor_Yaw.Get_Now_Angle();
 
-    if()
-    // 随动环
-    Chassis_Angle = Motor_Yaw.Get_Now_Angle();
-    PID_Chassis_Follow.Set_Target(Reference_Angle);
-    PID_Chassis_Follow.Set_Now(Chassis_Angle);
-    PID_Chassis_Follow.TIM_Adjust_PeriodElapsedCallback();
-    Chassis.Set_Target_Omega(PID_Chassis_Follow.Get_Out());
+        //Reference_Angle = OptimizeAngle(Reference_Angle, Chassis_Angle);
+        PID_Chassis_Follow.Set_Target(Reference_Angle);
+        PID_Chassis_Follow.Set_Now(Chassis_Angle);
+        PID_Chassis_Follow.TIM_Adjust_PeriodElapsedCallback();
+        Chassis.Set_Target_Omega(-PID_Chassis_Follow.Get_Out());
+    }
 
 #ifdef omni_wheel
     // 云台，随动掉线保护
@@ -784,7 +806,7 @@ void Class_Chariot::CAN_Chassis_Tx_Max_Power_Callback()
     float Chassis_Actual_Power;
     Chassis_Power_Max = Referee.Get_Chassis_Power_Max();
 
-    //	Chassis_Power_Max=40;
+    // Chassis_Power_Max=40;
     Chassis_Actual_Power = Referee.Get_Chassis_Power();
     memcpy(CAN1_0x01E_Tx_Data, &Chassis_Power_Max, sizeof(uint16_t));
     memcpy(CAN1_0x01E_Tx_Data + 2, &Chassis_Actual_Power, sizeof(float));

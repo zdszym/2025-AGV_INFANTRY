@@ -123,7 +123,7 @@ protected:
     float MiniPC_Autoaiming_Yaw_Angle_Resolution = 0.003f;
     //迷你主机云台pitch自瞄控制系数
     float MiniPC_Autoaiming_Pitch_Angle_Resolution = 0.003f;
-
+  uint8_t Shoot_Flag = 0;
     //内部变量
 
     //读变量

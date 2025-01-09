@@ -157,11 +157,9 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         chariot.Chassis.Supercap.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-    case (0x206):
-    {
-        
-    }
+
 }
+    }
 #endif
 /**
  * @brief Gimbal_CAN1回调函数
@@ -507,7 +505,7 @@ extern "C" void Task_Loop()
 
     Chassis_Power = chariot.Referee.Get_Chassis_Power();
     remain_buff = chariot.Referee.Get_Chassis_Energy_Buffer();
-    printf("%f,%f,%f,%f\r\n", Chassis_Power, remain_buff, test_k1, test_k2);
+    printf("%f,%f,%f\n", Chassis_Power, remain_buff, test_k1);
     HAL_Delay(10);
 #endif
 }

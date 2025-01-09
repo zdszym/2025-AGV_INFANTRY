@@ -240,12 +240,12 @@ void Class_Booster::Output()
         Motor_Friction_Right.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
 
         // 热量控制
-        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
-        {
+//        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
+//        {
 
             Drvier_Angle = Now_Angle - 2.0f * PI / 8.0f;
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
-        }
+//        }
 
         Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
         Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
