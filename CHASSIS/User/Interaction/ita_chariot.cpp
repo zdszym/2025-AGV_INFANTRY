@@ -804,7 +804,7 @@ void Class_Chariot::CAN_Chassis_Tx_Max_Power_Callback()
 {
     uint16_t Chassis_Power_Max;
     float Chassis_Actual_Power;
-    Chassis_Power_Max = Referee.Get_Chassis_Power_Max();
+    Chassis_Power_Max = Chassis.Power_Limit.Get_Max_Power();
 
     // Chassis_Power_Max=40;
     Chassis_Actual_Power = Referee.Get_Chassis_Power();

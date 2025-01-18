@@ -22,6 +22,7 @@
 #include "dvc_supercap.h"
 #include "crt_chassis.h"
 #include "config.h"
+#include "alg_power_limit.h"
 
 /* Exported macros -----------------------------------------------------------*/
 class Class_Chariot;
