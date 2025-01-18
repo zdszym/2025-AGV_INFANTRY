@@ -75,7 +75,7 @@ public:
     #ifdef POWER_LIMIT
     
     //功率限制
-    Class_Power_Limit Power_Limit;
+    //Class_Power_Limit Power_Limit;
     
     
     #endif
@@ -86,6 +86,8 @@ public:
     Class_DJI_Motor_C620 Motor_Wheel[4];
     //舵轮类舵小板实例
     Class_Agv_Board Agv_Board[4];
+    //能量环实例
+    Class_Power_Limit Power_Limit;
 
     void Init(float __Velocity_X_Max = 4.0f, float __Velocity_Y_Max = 4.0f, float __Omega_Max = 8.0f, float __Steer_Power_Ratio = 0.5);
 

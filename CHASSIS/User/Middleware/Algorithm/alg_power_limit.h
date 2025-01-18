@@ -30,13 +30,15 @@ class Class_DJI_Motor_C620;
 class Class_Power_Limit
 {
     public:
-
+    Class_PID PID_Energy_Control;
     inline void Set_Power_Limit(float __total_power_limit);
     inline void Set_Chassis_Buffer(float __buffer);
     inline void Set_Supercap_Enegry(float __energy);
     inline void Set_Supercap_Voltage(float __voltage);
     inline void Set_Supercap_Print_Flag(uint8_t __flag);
-
+    inline void Set_True_Energy(float __true_energy);
+   inline void Set_Max_Power(float __max_power);
+    inline float Get_Max_Power();
     float Get_Torque_Current(uint8_t num);
 
     void Set_Motor(Class_DJI_Motor_C620 (&Motor)[4]);
@@ -44,14 +46,20 @@ class Class_Power_Limit
     void Output(Class_DJI_Motor_C620 (&Motor)[4]);
 
     void TIM_Adjust_PeriodElapsedCallback(Class_DJI_Motor_C620 (&Motor)[4]);
-    
+    //void Set_Out();
+    //能量换初始化
+    void Init();
+    //void Energy_Output();
+    void Energy_Control();
     protected:
 
+    float True_Max_Power;
+    float Max_Power;
     float Limit_K = 1.0f;
     float Chassis_Buffer;
     const float Min_Buffer = 10.0f; 
     const float Protected_Buffer = 30.0f;
-
+    float Target_Energy=30;
     //转矩系数 rad转rpm系数
 	float Toque_Coefficient = 1.99688994e-6f * (3591/187) / 13.93f;  // (20/16384)*(0.3)*(187/3591)/9.55
 
@@ -91,6 +99,9 @@ class Class_Power_Limit
 	float Power_Scale;  
     //伸缩之后的功率限制
 	float Scaled_Give_Power[4];  
+
+
+    float True_Energy;
 };
 
 /**
@@ -136,6 +147,21 @@ void Class_Power_Limit::Set_Supercap_Voltage(float __voltage)
 void Class_Power_Limit::Set_Supercap_Print_Flag(uint8_t __flag)
 {
     Supercap_Print_Flag = __flag;
+}
+
+inline void Class_Power_Limit::Set_True_Energy(float __true_energy)
+{
+    True_Energy = __true_energy;
+}
+
+inline void Class_Power_Limit::Set_Max_Power(float __max_power)
+{
+    Max_Power = __max_power;
+}
+
+inline float Class_Power_Limit::Get_Max_Power()
+{
+    return Max_Power; 
 }
 
 /* Exported types ------------------------------------------------------------*/

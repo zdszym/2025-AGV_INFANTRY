@@ -23,6 +23,19 @@
 /* Private function declarations ---------------------------------------------*/
 
 
+void Class_Power_Limit::Init()
+{
+	PID_Energy_Control.Init(0.5,0,0,0,0,30,0,0,0,0);
+}
+
+
+ void Class_Power_Limit::Energy_Control()
+{
+        //角速度环
+        PID_Energy_Control.Set_Target(Target_Energy);
+        PID_Energy_Control.Set_Now(True_Energy);
+        True_Max_Power=Max_Power-PID_Energy_Control.Get_Out();
+}
 /**
  * @brief ��ȡ���Ť�ص���
  *
@@ -209,6 +222,8 @@ void Class_Power_Limit::TIM_Adjust_PeriodElapsedCallback(Class_DJI_Motor_C620 (&
 	#endif
 }
 
+
+
 /**
  * @brief �趨����������
  *
@@ -392,6 +407,8 @@ void Class_Power_Limit::Set_Motor(Class_DJI_Motor_C620 (&Motor)[4])
 //         }
 //     }
 // }
+
+
 /* Function prototypes -------------------------------------------------------*/
 
 

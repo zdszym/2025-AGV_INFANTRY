@@ -557,7 +557,17 @@ void Class_Chariot::Control_Booster()
         }
         else
         {
-              if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
+
+
+            //  if (DR16.Get_Wheel() > 0.9)
+            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
+            //  if (DR16.Get_Wheel() < -0.9)
+            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
+
+              if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
+							{
+								Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+								              if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
             {
                 Shoot_Flag = 0;
             }
@@ -571,17 +581,13 @@ void Class_Chariot::Control_Booster()
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
                 Shoot_Flag = 1;
             }
+						
+						 
+							}
+                 
 
-            //  if (DR16.Get_Wheel() > 0.9)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-            //  if (DR16.Get_Wheel() < -0.9)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
-
-            //  if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_MIDDLE_UP)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-
-            //  if (DR16.Get_Right_Switch() == DR16_Switch_Status_TRIG_UP_MIDDLE)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+              if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
+                  Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
         }
     }
 }
