@@ -148,7 +148,7 @@ protected:
     // 写变量
 
     // 发射机构状态
-    Enum_Booster_Control_Type Booster_Control_Type = Booster_Control_Type_CEASEFIRE;
+    Enum_Booster_Control_Type Booster_Control_Type = Booster_Control_Type_DISABLE;
     Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_SINGLE;
     Enum_Booster_Jamming_Type Booster_Jamming_Type = Booster_Not_Jamming;
     // 摩擦轮角速度

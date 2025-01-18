@@ -40,7 +40,7 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
     Chassis.Init();
 
     // 底盘随动PID环初始化
-    PID_Chassis_Follow.Init(0.1f, 0.0f, 0.0f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
+    PID_Chassis_Follow.Init(0.3f, 0.5f, 0.0f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
 
     // yaw电机canid初始化  只获取其编码器值用于底盘随动，并不参与控制
     Motor_Yaw.Init(&hcan2, DJI_Motor_ID_0x206);

@@ -170,7 +170,7 @@ void Class_Gimbal_Yaw_Motor_GM6020::Transform_Angle()
 
 float angle_sum = 0; // 角度总和
 int count = 0;       // 当前计数
-
+float output=0;
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -239,13 +239,13 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
     case (DJI_Motor_Control_Method_IMU_ANGLE):
     {
 
-        // filtered_target_angle.Set_Now(Target_Angle);
-        // filtered_target_angle.TIM_Adjust_PeriodElapsedCallback();
-        // Target_Angle=filtered_target_angle.Get_Out();
+//         filtered_target_angle.Set_Now(Target_Angle);
+//         filtered_target_angle.TIM_Adjust_PeriodElapsedCallback();
+//         Target_Angle=filtered_target_angle.Get_Out();
 
         // PID_Angle.Set_Target(Target_Angle);
         // 替换原来的filtered_target_angle相关代码
-        if (count < 10)
+        if (count < 100)
         {
             angle_sum += Target_Angle;
             count++;
@@ -253,8 +253,10 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
         }
         else
         {
-            angle_sum = angle_sum - (angle_sum / 10) + Target_Angle;
-            Target_Angle = angle_sum / 10;
+            angle_sum = angle_sum - (angle_sum / 100) + Target_Angle;
+		    output= angle_sum / 100;
+            Target_Angle =output;
+		
         }
 
         PID_Angle.Set_Target(Target_Angle);
@@ -612,7 +614,7 @@ void Class_Gimbal::TIM_Calculate_PeriodElapsedCallback()
         mod200 = 0;
     }
 
-    Motor_Pitch.TIM_PID_PeriodElapsedCallback();
+    //Motor_Pitch.TIM_PID_PeriodElapsedCallback();
 
     Motor_Pitch_LK6010.TIM_PID_PeriodElapsedCallback();
 }
