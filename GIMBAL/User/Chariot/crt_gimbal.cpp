@@ -245,7 +245,7 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
 
         // PID_Angle.Set_Target(Target_Angle);
         // 替换原来的filtered_target_angle相关代码
-        if (count < 100)
+        if (count < 10)
         {
             angle_sum += Target_Angle;
             count++;
@@ -253,8 +253,8 @@ void Class_Gimbal_Pitch_Motor_GM6020::TIM_PID_PeriodElapsedCallback()
         }
         else
         {
-            angle_sum = angle_sum - (angle_sum / 100) + Target_Angle;
-		    output= angle_sum / 100;
+            angle_sum = angle_sum - (angle_sum / 10) + Target_Angle;
+		    output= angle_sum / 10;
             Target_Angle =output;
 		
         }
@@ -475,7 +475,7 @@ void Class_Gimbal::Init()
     // Motor_Pitch.PID_Angle.Init(7.0f, 2.0f, 0.0f, 0.0f, 100, 100);
     // Motor_Pitch.PID_Omega.Init(2200.0f, 15000.0f, 0.0f, 0.0f, Motor_Pitch.Get_Output_Max(), Motor_Pitch.Get_Output_Max());
 
-    Motor_Pitch.PID_Angle.Init(5.5f, 0.0f, 0.007f, 0.0f, 100, 100, 0, 0, 0, 0.001, 0.005);
+    Motor_Pitch.PID_Angle.Init(3.0f, 0.0f, 0.00f, 0.0f, 100, 100, 0, 0, 0, 0.001, 0.005);
     Motor_Pitch.PID_Omega.Init(2200.0f, 3500.0f, 0.0f, 0.0f, Motor_Pitch.Get_Output_Max(), Motor_Pitch.Get_Output_Max());
 
     Motor_Pitch.PID_Torque.Init(0.8f, 100.0f, 0.0f, 0.0f, Motor_Pitch.Get_Output_Max(), Motor_Pitch.Get_Output_Max());
@@ -614,7 +614,7 @@ void Class_Gimbal::TIM_Calculate_PeriodElapsedCallback()
         mod200 = 0;
     }
 
-    //Motor_Pitch.TIM_PID_PeriodElapsedCallback();
+    Motor_Pitch.TIM_PID_PeriodElapsedCallback();
 
     Motor_Pitch_LK6010.TIM_PID_PeriodElapsedCallback();
 }

@@ -330,19 +330,18 @@ void Class_Chariot::Control_Chassis()
             {
                 Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_SPIN);
             }
-                    //     if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
-                    //     {
-                    //        gimbal_velocity_y=1;
-            
-                    //    }
-            
-                    //    if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
-                    //    {
-                    //        gimbal_velocity_y=0;
-            		// 					gimbal_velocity_x=0;
+            //     if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
+            //     {
+            //        gimbal_velocity_y=1;
 
-            
-                    //    }
+            //    }
+
+            //    if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
+            //    {
+            //        gimbal_velocity_y=0;
+            // 					gimbal_velocity_x=0;
+
+            //    }
         }
     }
 
@@ -468,8 +467,8 @@ void Class_Chariot::Control_Gimbal()
                 Gimbal.Set_Gimbal_Control_Type(Gimbal_Control_Type_MINIPC);
 
                 // 遥控器操作逻辑
-                tmp_gimbal_yaw -= dr16_y * DR16_Yaw_Angle_Resolution * 10;
-                tmp_gimbal_pitch += dr16_r_y * DR16_Pitch_Resolution * 10 ;
+                tmp_gimbal_yaw -= dr16_y * DR16_Yaw_Angle_Resolution * 5;
+                tmp_gimbal_pitch += dr16_r_y * DR16_Pitch_Resolution * 10;
             }
             else
             {
@@ -550,44 +549,43 @@ void Class_Chariot::Control_Booster()
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI)
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
             }
-             else if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_PRESSED_FREE)
-             {
-                 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-             }
+            else if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_PRESSED_FREE)
+            {
+                Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+            }
         }
         else
         {
 
-
-            //  if (DR16.Get_Wheel() > 0.9)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-            //  if (DR16.Get_Wheel() < -0.9)
-            //      Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
-
-              if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
-							{
-								Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-								              if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
+            if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
             {
-                Shoot_Flag = 0;
+                // 如果是自瞄模式
+                if (DR16.Get_Left_Switch() == DR16_Switch_Status_DOWN&&MiniPC.Get_auto_shoot_flag())
+                {
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);//单发
+                    MiniPC.Set_auto_shoot_flag(0);
+                }
+                else
+                {
+                    if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
+                    {
+                        Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+                        Shoot_Flag = 0;
+                    }
+                    if (DR16.Get_Wheel() < -0.8f && Shoot_Flag == 0) // 单发
+                    {
+                        Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
+                        Shoot_Flag = 1;
+                    }
+                    if (DR16.Get_Wheel() > 0.8f && Shoot_Flag == 0) // 五连发
+                    {
+                        Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
+                        Shoot_Flag = 1;
+                    }
+                }
             }
-            if (DR16.Get_Wheel() < -0.8f && Shoot_Flag == 0) // 单发
-            {
-                Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-                Shoot_Flag = 1;
-            }
-            if (DR16.Get_Wheel() > 0.8f && Shoot_Flag == 0) // 五连发
-            {
-                Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-                Shoot_Flag = 1;
-            }
-						
-						 
-							}
-                 
-
-              if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
-                  Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+            if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
+                Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
         }
     }
 }

@@ -38,6 +38,7 @@ class Class_Power_Limit
     inline void Set_Supercap_Print_Flag(uint8_t __flag);
     inline void Set_True_Energy(float __true_energy);
    inline void Set_Max_Power(float __max_power);
+    inline float Get_True_Max_Power();
     inline float Get_Max_Power();
     float Get_Torque_Current(uint8_t num);
 
@@ -164,6 +165,10 @@ inline float Class_Power_Limit::Get_Max_Power()
     return Max_Power; 
 }
 
+inline float Class_Power_Limit::Get_True_Max_Power()
+{
+    return True_Max_Power; 
+}
 /* Exported types ------------------------------------------------------------*/
 
 #endif

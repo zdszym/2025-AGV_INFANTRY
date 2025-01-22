@@ -37,6 +37,8 @@
  */
 void Class_Tricycle_Chassis::Init(float __Velocity_X_Max, float __Velocity_Y_Max, float __Omega_Max, float __Steer_Power_Ratio)
 {
+	Power_Limit.Init();
+	
     Velocity_X_Max = __Velocity_X_Max;
     Velocity_Y_Max = __Velocity_Y_Max;
     Omega_Max = __Omega_Max;

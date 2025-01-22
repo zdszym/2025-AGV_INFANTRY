@@ -42,6 +42,8 @@ void Class_MiniPC::Init(Struct_USB_Manage_Object *__USB_Manage_Object, uint8_t _
  * @brief 数据处理过程
  *
  */
+float distance_booster_camera=-0.20;
+float distance_yaw=-0.10f;
 void Class_MiniPC::Data_Process()
 {
     // memcpy(&Data_NUC_To_MCU, ((Struct_MiniPC_USB_Data *)USB_Manage_Object->Rx_Buffer)->Data, sizeof(Struct_MiniPC_Rx_Data));
@@ -49,7 +51,7 @@ void Class_MiniPC::Data_Process()
 
     float tmp_yaw, tmp_pitch;
 
-    Self_aim(Pack_Rx.target_x, Pack_Rx.target_y, Pack_Rx.target_z + 0.06, &Rx_Angle_Yaw, &Rx_Angle_Pitch, &Distance);
+    Self_aim(Pack_Rx.target_x-distance_yaw, Pack_Rx.target_y, Pack_Rx.target_z +distance_booster_camera, &Rx_Angle_Yaw, &Rx_Angle_Pitch, &Distance);
 
     //    Rx_Angle_Yaw = meanFilter(tmp_yaw);
     //    Rx_Angle_Pitch = meanFilter(tmp_pitch);

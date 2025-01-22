@@ -76,6 +76,7 @@ struct Pack_rx_t
     float target_x;
     float target_y;
     float target_z;
+    uint8_t auto_shoot_flag;    //0:进入遥控器状态后，不允许自动射击 1:进入自瞄状态后，允许遥控器控制射击
     uint8_t UP_flag;
     uint16_t crc16;
 } __attribute__((packed));
@@ -239,6 +240,9 @@ public:
     inline void Set_Outpost_Status(Enum_MiniPC_Data_Status __Outpost_Status);
     inline void Set_Outpost_Protect_Status(Enum_MiniPC_Data_Status __Outpost_Protect_Status);
     inline void Set_Vision_Mode(Enum_Vision_Mode _Vision_Mode);
+
+    inline void Set_auto_shoot_flag(uint8_t __auto_shoot_flag); // 设置自动射击标志位
+    inline uint8_t Get_auto_shoot_flag();                     // 获取自动射击标志位
     inline Enum_Vision_Mode Get_Vision_Mode();
 
     void Append_CRC16_Check_Sum(uint8_t *pchMessage, uint32_t dwLength);
@@ -324,6 +328,16 @@ protected:
 /* Exported variables --------------------------------------------------------*/
 
 /* Exported function declarations --------------------------------------------*/
+void Class_MiniPC::Set_auto_shoot_flag(uint8_t __auto_shoot_flag)
+{
+    Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
+}
+
+uint8_t Class_MiniPC::Get_auto_shoot_flag()
+{
+    return (Pack_Rx.auto_shoot_flag);
+}
+
 
 float Class_MiniPC::Get_Rx_Pitch_Angle()
 {

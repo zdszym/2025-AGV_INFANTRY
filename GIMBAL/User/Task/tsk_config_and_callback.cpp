@@ -366,7 +366,7 @@ void Task1ms_TIM5_Callback()
     if (start_flag == 1)
     {
         chariot.TIM_Calculate_PeriodElapsedCallback();
-			  //buzzer_setTask(&buzzer,BUZZER_CALIBRATED_PRIORITY);
+			  buzzer_setTask(&buzzer,BUZZER_CALIBRATED_PRIORITY);
 
         /****************************** 驱动层回调函数 1ms *****************************************/
 
@@ -390,7 +390,7 @@ void Task1ms_TIM5_Callback()
     }
 }
 void Task1ms_TIM6_Callback(){
-   // buzzer_taskScheduler(&buzzer);
+   //buzzer_taskScheduler(&buzzer);
 }
 
 /**

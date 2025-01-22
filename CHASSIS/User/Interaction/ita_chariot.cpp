@@ -40,7 +40,7 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
     Chassis.Init();
 
     // 底盘随动PID环初始化
-    PID_Chassis_Follow.Init(0.3f, 0.5f, 0.0f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
+    PID_Chassis_Follow.Init(0.3f, 0.0f, 0.03f, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 0.0f, 0.001f, 0.01f);
 
     // yaw电机canid初始化  只获取其编码器值用于底盘随动，并不参与控制
     Motor_Yaw.Init(&hcan2, DJI_Motor_ID_0x206);
@@ -122,7 +122,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
         // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
-        chassis_omega = PI * 2;
+        chassis_omega = PI * 4;
     }
     //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     //    {
@@ -590,7 +590,7 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
         // 随动环
         Chassis_Angle = Motor_Yaw.Get_Now_Angle();
 
-        //Reference_Angle = OptimizeAngle(Reference_Angle, Chassis_Angle);
+      
         PID_Chassis_Follow.Set_Target(Reference_Angle);
         PID_Chassis_Follow.Set_Now(Chassis_Angle);
         PID_Chassis_Follow.TIM_Adjust_PeriodElapsedCallback();
@@ -804,7 +804,7 @@ void Class_Chariot::CAN_Chassis_Tx_Max_Power_Callback()
 {
     uint16_t Chassis_Power_Max;
     float Chassis_Actual_Power;
-    Chassis_Power_Max = Chassis.Power_Limit.Get_Max_Power();
+    Chassis_Power_Max = Chassis.Power_Limit.Get_True_Max_Power();
 
     // Chassis_Power_Max=40;
     Chassis_Actual_Power = Referee.Get_Chassis_Power();
