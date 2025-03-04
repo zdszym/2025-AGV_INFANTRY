@@ -122,7 +122,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
         // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
-        chassis_omega = PI * 4;
+        chassis_omega = PI * 0.4*2;
     }
     //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     //    {
