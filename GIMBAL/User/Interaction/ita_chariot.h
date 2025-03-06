@@ -30,7 +30,15 @@
 //#define POWER_LIMIT
 
 /* Exported types ------------------------------------------------------------*/
-
+		/**
+ * @brief DR16控制数据来源
+ *
+ */
+enum Enum_DR16_Control_Type
+{
+    DR16_Control_Type_REMOTE = 0,
+    DR16_Control_Type_KEYBOARD,
+};
 /**
  * @brief 控制对象
  *
@@ -57,6 +65,7 @@ public:
     Class_Tricycle_Chassis Chassis;
 
     Class_Referee Referee;
+	
 #ifdef GIMBAL
     //遥控器
     Class_DR16 DR16;
@@ -66,6 +75,7 @@ public:
     Class_Gimbal Gimbal;
     //发射机构
     Class_Booster Booster;
+	inline Enum_DR16_Control_Type Get_DR16_Control_Type();	
 #endif
 
     void Init(float __DR16_Dead_Zone = 0);
@@ -131,14 +141,26 @@ protected:
     //写变量
 
     //读写变量
-
+ Enum_DR16_Control_Type DR16_Control_Type = DR16_Control_Type_REMOTE;
+        
     //内部函数
-
+		void Judge_DR16_Control_Type();
     void Control_Chassis();
     void Control_Gimbal();
     void Control_Booster();
 
 };
+
+  /**
+     * @brief 获取DR16控制数据来源
+     * 
+     * @return Enum_DR16_Control_Type DR16控制数据来源
+     */
+
+    Enum_DR16_Control_Type Class_Chariot::Get_DR16_Control_Type()
+    {
+        return (DR16_Control_Type);
+    }
 
 #ifdef AGV
 typedef __packed enum {
@@ -177,6 +199,7 @@ typedef __packed struct
     CHASSIS_RECEIVE_T receive;
 
 } CHASSIS_T;
+
 void Chassis_Connection_Init(void);
 extern CHASSIS_T chassis;
 void Chassis_Connection_Task(void);
