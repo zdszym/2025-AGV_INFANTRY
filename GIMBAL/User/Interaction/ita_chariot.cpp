@@ -584,29 +584,20 @@ void Class_Chariot::Control_Booster()
         {
             if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
             {
-                // 如果是自瞄模式
-                if (DR16.Get_Left_Switch() == DR16_Switch_Status_DOWN && MiniPC.Get_auto_shoot_flag())
+                if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
                 {
-                    Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE); // 单发
-                    MiniPC.Set_auto_shoot_flag(0);
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+                    Shoot_Flag = 0;
                 }
-                else
+                if (DR16.Get_Wheel() < -0.8f && Shoot_Flag == 0) // 单发
                 {
-                    if (DR16.Get_Wheel() > -0.2f && DR16.Get_Wheel() < 0.2f)
-                    {
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-                        Shoot_Flag = 0;
-                    }
-                    if (DR16.Get_Wheel() < -0.8f && Shoot_Flag == 0) // 单发
-                    {
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
-                        Shoot_Flag = 1;
-                    }
-                    if (DR16.Get_Wheel() > 0.8f && Shoot_Flag == 0) // 五连发
-                    {
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-                        Shoot_Flag = 1;
-                    }
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
+                    Shoot_Flag = 1;
+                }
+                if (DR16.Get_Wheel() > 0.8f && Shoot_Flag == 0) // 五连发
+                {
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
+                    Shoot_Flag = 1;
                 }
             }
             if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
@@ -616,22 +607,22 @@ void Class_Chariot::Control_Booster()
 }
 #endif
 
-    /**
-     * @brief 计算回调函数
-     *
-     */
-    void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
-    {
+/**
+ * @brief 计算回调函数
+ *
+ */
+void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
+{
 #ifdef CHASSIS
 
-        // 底盘的控制策略
-        //        Control_Chassis();
-        // 各个模块的分别解算
-        Chassis.TIM_Calculate_PeriodElapsedCallback();
+    // 底盘的控制策略
+    //        Control_Chassis();
+    // 各个模块的分别解算
+    Chassis.TIM_Calculate_PeriodElapsedCallback();
 
-        Supercap.Set_Now_Power(Chassis.Referee->Get_Chassis_Power());
-        Supercap.Set_Limit_Power(Chassis.Referee->Get_Chassis_Power_Max());
-        Supercap.TIM_UART_PeriodElapsedCallback();
+    Supercap.Set_Now_Power(Chassis.Referee->Get_Chassis_Power());
+    Supercap.Set_Limit_Power(Chassis.Referee->Get_Chassis_Power_Max());
+    Supercap.TIM_UART_PeriodElapsedCallback();
 
 #elif defined(GIMBAL)
 
@@ -646,69 +637,69 @@ void Class_Chariot::Control_Booster()
     this->CAN_Gimbal_TxCpltCallback();
 
 #endif
-    }
+}
 /**
  * @brief 判断DR16控制数据来源
  *
  */
 #ifdef GIMBAL
-    void Class_Chariot::Judge_DR16_Control_Type()
+void Class_Chariot::Judge_DR16_Control_Type()
+{
+    if (DR16.Get_Left_X() != 0 ||
+        // DR16.Get_Left_Y() != 0 ||
+        DR16.Get_Right_X() != 0 ||
+        DR16.Get_Right_Y() != 0)
     {
-        if (DR16.Get_Left_X() != 0 ||
-            // DR16.Get_Left_Y() != 0 ||
-            DR16.Get_Right_X() != 0 ||
-            DR16.Get_Right_Y() != 0)
-        {
-            DR16_Control_Type = DR16_Control_Type_REMOTE;
-        }
-        else if (DR16.Get_Mouse_X() != 0 ||
-                 DR16.Get_Mouse_Y() != 0 ||
-                 DR16.Get_Mouse_Z() != 0 ||
-                 DR16.Get_Keyboard_Key_A() != 0 ||
-                 DR16.Get_Keyboard_Key_D() != 0 ||
-                 DR16.Get_Keyboard_Key_W() != 0 ||
-                 DR16.Get_Keyboard_Key_S() != 0)
-        {
-            DR16_Control_Type = DR16_Control_Type_KEYBOARD;
-        }
+        DR16_Control_Type = DR16_Control_Type_REMOTE;
     }
+    else if (DR16.Get_Mouse_X() != 0 ||
+             DR16.Get_Mouse_Y() != 0 ||
+             DR16.Get_Mouse_Z() != 0 ||
+             DR16.Get_Keyboard_Key_A() != 0 ||
+             DR16.Get_Keyboard_Key_D() != 0 ||
+             DR16.Get_Keyboard_Key_W() != 0 ||
+             DR16.Get_Keyboard_Key_S() != 0)
+    {
+        DR16_Control_Type = DR16_Control_Type_KEYBOARD;
+    }
+}
 #endif
 /**
  * @brief 控制回调函数
  *
  */
 #ifdef GIMBAL
-    void Class_Chariot::TIM_Control_Callback()
-    {
-        Judge_DR16_Control_Type();
-        // 底盘，云台，发射机构控制逻辑
-        Control_Chassis();
-        Control_Gimbal();
-        Control_Booster();
-    }
+void Class_Chariot::TIM_Control_Callback()
+{
+    Judge_DR16_Control_Type();
+    // 底盘，云台，发射机构控制逻辑
+    Control_Chassis();
+    Control_Gimbal();
+    Control_Booster();
+}
 #endif
-    /**
-     * @brief 在线判断回调函数
-     *
-     */
-    void Class_Chariot::TIM1msMod50_Alive_PeriodElapsedCallback()
+/**
+ * @brief 在线判断回调函数
+ *
+ */
+void Class_Chariot::TIM1msMod50_Alive_PeriodElapsedCallback()
+{
+    static int mod50 = 0;
+    mod50++;
+    if (mod50 == 50)
     {
-        static int mod50 = 0;
-        mod50++;
-        if (mod50 == 50)
-        {
 #ifdef CHASSIS
 
-            Referee.TIM1msMod50_Alive_PeriodElapsedCallback();
+        Referee.TIM1msMod50_Alive_PeriodElapsedCallback();
 
 #ifdef POWER_LIMIT
-            Supercap.TIM_Alive_PeriodElapsedCallback();
+        Supercap.TIM_Alive_PeriodElapsedCallback();
 #endif
 
-            for (auto &wheel : Chassis.Motor_Wheel)
-            {
-                wheel.TIM_Alive_PeriodElapsedCallback();
-            }
+        for (auto &wheel : Chassis.Motor_Wheel)
+        {
+            wheel.TIM_Alive_PeriodElapsedCallback();
+        }
 
 #elif defined(GIMBAL)
 
@@ -735,8 +726,8 @@ void Class_Chariot::Control_Booster()
 
 #endif
 
-            mod50 = 0;
-        }
+        mod50 = 0;
     }
+}
 
-    /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/
+/************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

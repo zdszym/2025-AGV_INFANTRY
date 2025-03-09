@@ -42,8 +42,8 @@ void Class_MiniPC::Init(Struct_USB_Manage_Object *__USB_Manage_Object, uint8_t _
  * @brief 数据处理过程
  *
  */
-float distance_booster_camera=-0.20;
-float distance_yaw=-0.10f;
+float distance_booster_camera=0.04;
+float distance_yaw=-0.00f;
 void Class_MiniPC::Data_Process()
 {
     // memcpy(&Data_NUC_To_MCU, ((Struct_MiniPC_USB_Data *)USB_Manage_Object->Rx_Buffer)->Data, sizeof(Struct_MiniPC_Rx_Data));

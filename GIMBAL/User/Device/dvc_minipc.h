@@ -76,7 +76,7 @@ struct Pack_rx_t
     float target_x;
     float target_y;
     float target_z;
-    uint8_t auto_shoot_flag;    //0:进入遥控器状态后，不允许自动射击 1:进入自瞄状态后，允许遥控器控制射击
+    // uint8_t auto_shoot_flag;    //0:进入遥控器状态后，不允许自动射击 1:进入自瞄状态后，允许遥控器控制射击
     uint8_t UP_flag;
     uint16_t crc16;
 } __attribute__((packed));
@@ -330,12 +330,12 @@ protected:
 /* Exported function declarations --------------------------------------------*/
 void Class_MiniPC::Set_auto_shoot_flag(uint8_t __auto_shoot_flag)
 {
-    Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
+    // Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
 }
 
 uint8_t Class_MiniPC::Get_auto_shoot_flag()
 {
-    return (Pack_Rx.auto_shoot_flag);
+    // return (Pack_Rx.auto_shoot_flag);
 }
 
 

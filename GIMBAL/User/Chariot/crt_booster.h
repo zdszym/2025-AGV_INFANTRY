@@ -152,7 +152,7 @@ protected:
     Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_SINGLE;
     Enum_Booster_Jamming_Type Booster_Jamming_Type = Booster_Not_Jamming;
     // 摩擦轮角速度
-    float Friction_Omega = 750.0f;
+    float Friction_Omega = 710.0f;
     // 拨弹盘实际的目标速度, 一圈八发子弹
     float Driver_Omega = -1.0f * PI;
     // 拨弹轮目标绝对角度 加圈数
