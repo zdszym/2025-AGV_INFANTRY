@@ -37,8 +37,8 @@
  */
 void Class_Tricycle_Chassis::Init(float __Velocity_X_Max, float __Velocity_Y_Max, float __Omega_Max, float __Steer_Power_Ratio)
 {
-	Power_Limit.Init();
-	
+    Power_Limit.Init();
+
     Velocity_X_Max = __Velocity_X_Max;
     Velocity_Y_Max = __Velocity_Y_Max;
     Omega_Max = __Omega_Max;
@@ -176,10 +176,10 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 #endif
 #ifdef steering_wheel
 
-    //test 
-//    float omega=0.5f;
-//    Set_Target_Omega(omega);
-    //单位为m/s
+    // test
+    //    float omega=0.5f;
+    //    Set_Target_Omega(omega);
+    // 单位为m/s
     float Chassis_Vr_A = Target_Omega * R_A;
     float Chassis_Vr_B = Target_Omega * R_B;
     float Chassis_Vr_C = Target_Omega * R_C;
@@ -236,6 +236,8 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 #endif
 }
 
+Enum_Supercap_Mode test_mode = Supercap_Mode_ENABLE;
+float test_power = 50.0f;
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -266,39 +268,42 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
     Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
     Power_Limit.Energy_Control();
-//    /****************************超级电容***********************************/
-//    Supercap.Set_Now_Power(Referee->Get_Chassis_Power());
-//    if (Referee->Get_Referee_Status() == Referee_Status_DISABLE)
-//        Supercap.Set_Limit_Power(45.0f);
-//    else
-//    {
-//        float offset;
-//        offset = (Referee->Get_Chassis_Energy_Buffer() - 20.0f) / 4;
-//        Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max() + offset);
-//    }
+    /****************************超级电容***********************************/
 
-//    Supercap.TIM_Supercap_PeriodElapsedCallback();
+    if (Referee->Get_Referee_Status() == Referee_Status_DISABLE)
+    {
+        Supercap.Set_Supercap_Mode(test_mode);
+        Supercap.Set_Limit_Power(test_power);
+    }
 
-//    /*************************功率限制策略*******************************/
-//    if (__Sprint_Status == Sprint_Status_ENABLE)
-//    {
-//        // 功率限制
-//        Power_Limit.Set_Power_Limit(Referee->Get_Chassis_Power_Max() * 1.5f);
-//    }
-//    else
-//    {
-//        Power_Limit.Set_Power_Limit(Referee->Get_Chassis_Power_Max());
-//    }
-//    // Power_Limit.Set_Power_Limit(45.0f);
-//    Power_Limit.Set_Motor(Motor_Wheel); // 添加四个电机的控制电流和当前转速
-//    Power_Limit.Set_Chassis_Buffer(Referee->Get_Chassis_Energy_Buffer());
+    else
+    {
+        Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max());
+        Supercap.Set_Supercap_Mode(Supercap_Mode_MONITOR);
+    }
 
-//    if (Supercap.Get_Supercap_Status() == Supercap_Status_DISABLE)
-//        Power_Limit.Set_Supercap_Enegry(0.0f);
-//    else
-//        Power_Limit.Set_Supercap_Enegry(Supercap.Get_Stored_Energy());
+    Supercap.TIM_Supercap_PeriodElapsedCallback();
 
-//    Power_Limit.TIM_Adjust_PeriodElapsedCallback(Motor_Wheel); // 功率限制算法
+    //    /*************************功率限制策略*******************************/
+    //    if (__Sprint_Status == Sprint_Status_ENABLE)
+    //    {
+    //        // 功率限制
+    //        Power_Limit.Set_Power_Limit(Referee->Get_Chassis_Power_Max() * 1.5f);
+    //    }
+    //    else
+    //    {
+    //        Power_Limit.Set_Power_Limit(Referee->Get_Chassis_Power_Max());
+    //    }
+    //    // Power_Limit.Set_Power_Limit(45.0f);
+    //    Power_Limit.Set_Motor(Motor_Wheel); // 添加四个电机的控制电流和当前转速
+    //    Power_Limit.Set_Chassis_Buffer(Referee->Get_Chassis_Energy_Buffer());
+
+    //    if (Supercap.Get_Supercap_Status() == Supercap_Status_DISABLE)
+    //        Power_Limit.Set_Supercap_Enegry(0.0f);
+    //    else
+    //        Power_Limit.Set_Supercap_Enegry(Supercap.Get_Stored_Energy());
+
+    //    Power_Limit.TIM_Adjust_PeriodElapsedCallback(Motor_Wheel); // 功率限制算法
 
 #endif
 }
@@ -365,18 +370,18 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
     float speed_D = Target_Wheel_Omega[3];
 
     // 如果是刹车模式
-    if (Target_Velocity_X==0&&Target_Velocity_Y==0&&Target_Omega==0)
+    if (Target_Velocity_X == 0 && Target_Velocity_Y == 0 && Target_Omega == 0)
     {
         // 设置X形刹车角度
-//        actual_angle_A_rad = 315.0f * PI / 180.0f; // A轮
-//        actual_angle_B_rad = 225.0f * PI / 180.0f; // B轮
-//        actual_angle_C_rad = 135.0f * PI / 180.0f; // C轮
-//        actual_angle_D_rad = 45.0f * PI / 180.0f;  // D轮
-	    
-	            actual_angle_A_rad = last_angle[0]; // A轮
+        //        actual_angle_A_rad = 315.0f * PI / 180.0f; // A轮
+        //        actual_angle_B_rad = 225.0f * PI / 180.0f; // B轮
+        //        actual_angle_C_rad = 135.0f * PI / 180.0f; // C轮
+        //        actual_angle_D_rad = 45.0f * PI / 180.0f;  // D轮
+
+        actual_angle_A_rad = last_angle[0]; // A轮
         actual_angle_B_rad = last_angle[1]; // B轮
         actual_angle_C_rad = last_angle[2]; // C轮
-        actual_angle_D_rad = last_angle[3];  // D轮
+        actual_angle_D_rad = last_angle[3]; // D轮
     }
     // 速度限制
     int temp = 0;
@@ -403,20 +408,20 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
         speed_D = (int)(speed_D);
     }
     // 计算A轮速度分量
-    float vx_A = speed_A * cos(actual_angle_A_rad) *RPM2VEL;
-    float vy_A = speed_A * sin(actual_angle_A_rad) *RPM2VEL;
+    float vx_A = speed_A * cos(actual_angle_A_rad) * RPM2VEL;
+    float vy_A = speed_A * sin(actual_angle_A_rad) * RPM2VEL;
 
     // 计算B轮速度分量
-    float vx_B = speed_B * cos(actual_angle_B_rad) *RPM2VEL;
-    float vy_B = speed_B * sin(actual_angle_B_rad) *RPM2VEL;
+    float vx_B = speed_B * cos(actual_angle_B_rad) * RPM2VEL;
+    float vy_B = speed_B * sin(actual_angle_B_rad) * RPM2VEL;
 
     // 计算C轮速度分量
-    float vx_C = speed_C * cos(actual_angle_C_rad) *RPM2VEL;
-    float vy_C = speed_C * sin(actual_angle_C_rad) *RPM2VEL;
+    float vx_C = speed_C * cos(actual_angle_C_rad) * RPM2VEL;
+    float vy_C = speed_C * sin(actual_angle_C_rad) * RPM2VEL;
 
     // 计算D轮速度分量
-    float vx_D = speed_D * cos(actual_angle_D_rad) *RPM2VEL;
-    float vy_D = speed_D * sin(actual_angle_D_rad) *RPM2VEL;
+    float vx_D = speed_D * cos(actual_angle_D_rad) * RPM2VEL;
+    float vy_D = speed_D * sin(actual_angle_D_rad) * RPM2VEL;
 
 // 应用功率限制
 #ifdef POWER_LIMIT
@@ -431,7 +436,6 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
 //    vy_D *= power_ratio;
 #endif
 
-    
     Agv_Board[0].Set_Target_Velocity_X(vx_A);
     Agv_Board[0].Set_Target_Velocity_Y(vy_A);
 
@@ -443,16 +447,16 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
 
     Agv_Board[3].Set_Target_Velocity_X(vx_D);
     Agv_Board[3].Set_Target_Velocity_Y(vy_D);
-    
+
     Agv_Board[0].Output();
     Agv_Board[1].Output();
     Agv_Board[2].Output();
     Agv_Board[3].Output();
-    
-    last_angle[0]=actual_angle_A_rad;
-        last_angle[1]=actual_angle_B_rad;
-	      last_angle[2]=actual_angle_C_rad;
-		    last_angle[3]=actual_angle_D_rad;
+
+    last_angle[0] = actual_angle_A_rad;
+    last_angle[1] = actual_angle_B_rad;
+    last_angle[2] = actual_angle_C_rad;
+    last_angle[3] = actual_angle_D_rad;
 }
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

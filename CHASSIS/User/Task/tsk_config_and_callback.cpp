@@ -61,9 +61,9 @@
 extern float sum; // 用于测试
 /* Private variables ---------------------------------------------------------*/
 float theory_power;
-uint32_t init_finished =0 ;
-bool start_flag=0;
-//机器人控制对象
+uint32_t init_finished = 0;
+bool start_flag = 0;
+// 机器人控制对象
 Class_Chariot chariot;
 
 // 串口裁判系统对象
@@ -142,7 +142,7 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         chariot.CAN_Chassis_Rx_Gimbal_Callback(CAN_RxMessage->Data);
     }
     break;
-     case (0x152):  //留给上板通讯
+    case (0x152): // 留给上板通讯
     {
         chariot.CAN_Chassis_Rx_Gimbal_Callback_State(CAN_RxMessage->Data);
     }
@@ -152,14 +152,18 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
         chariot.Motor_Yaw.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-		case (0x67):  //留给超级电容
+    case (0x67): // 留给超级电容
     {
         chariot.Chassis.Supercap.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-
-}
+    case(0x55):
+    {
+        chariot.Chassis.Supercap.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
+    break;
+    }
+}
 #endif
 /**
  * @brief Gimbal_CAN1回调函数
@@ -222,18 +226,17 @@ void Gimbal_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
     {
     }
     break;
-    case (0x206)://保留can2对6020编码器的接口
+    case (0x206): // 保留can2对6020编码器的接口
     {
         chariot.Gimbal.Motor_Yaw.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-     case (0x205):
+    case (0x205):
     {
         chariot.Gimbal.Motor_Pitch.CAN_RxCpltCallback(CAN_RxMessage->Data);
     }
     break;
-
-	}
+    }
 }
 #endif
 /**
@@ -366,7 +369,7 @@ void Task100us_TIM4_Callback()
  * @brief TIM5任务回调函数
  *
  */
-float actual=0;
+float actual = 0;
 void Task1ms_TIM5_Callback()
 {
     init_finished++;
