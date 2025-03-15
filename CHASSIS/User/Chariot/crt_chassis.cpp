@@ -237,7 +237,7 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 }
 
 Enum_Supercap_Mode test_mode = Supercap_Mode_ENABLE;
-float test_power = 50.0f;
+float test_power = 58.0f;
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -270,16 +270,16 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     Power_Limit.Energy_Control();
     /****************************超级电容***********************************/
 
-    if (Referee->Get_Referee_Status() == Referee_Status_DISABLE)
-    {
-        Supercap.Set_Supercap_Mode(test_mode);
-        Supercap.Set_Limit_Power(test_power);
-    }
+//    if (Referee->Get_Referee_Status() == Referee_Status_DISABLE)
+//    {
+//        Supercap.Set_Supercap_Mode(test_mode);
+//        Supercap.Set_Limit_Power(test_power);
+//    }
 
-    else
+//    else
     {
-        Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max());
-        Supercap.Set_Supercap_Mode(Supercap_Mode_MONITOR);
+        Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max()-10.0);
+        Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
     }
 
     Supercap.TIM_Supercap_PeriodElapsedCallback();

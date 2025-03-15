@@ -81,6 +81,7 @@ public:
     float Get_Chassis_Power();
     inline float Get_Stored_Energy();
     inline float Get_Now_Voltage();
+    inline float Get_Buffer_Power();
 
     inline void Set_Limit_Power(float __Limit_Power);
     inline void Set_Supercap_Mode(Enum_Supercap_Mode __Mode);
@@ -152,6 +153,11 @@ protected:
 inline void Class_Supercap::Set_Supercap_Mode(Enum_Supercap_Mode __Mode)
 {
     Supercap_Tx_Data.Supercap_Mode = __Mode;
+}
+
+inline float Class_Supercap::Get_Buffer_Power()
+{
+    return (Supercap_Data.Buffer_Power);
 }
 
 /**
