@@ -42,7 +42,7 @@ struct Struct_Supercap_CAN_Data
 {
     float Chassis_Power;                  // 底盘功率
     float Buffer_Power;                   // 缓冲功率
-    float Cap_Percent;                    // 容量百分比
+    float Cap_Percent;                    // 容量百分比，满量程100
     Enum_Supercap_Status Supercap_Status; // 超级电容状态
     float Overload_Power;                 // 过载功率
     uint8_t Used_Energy;                  // 已使用能量
