@@ -70,6 +70,7 @@ public:
     Class_Slope Slope_Velocity_Y;
     //斜坡函数加减速角速度
     Class_Slope Slope_Omega;
+    Class_Filter_Fourier Filter_omega;
 
     Class_Supercap Supercap;
     #ifdef POWER_LIMIT

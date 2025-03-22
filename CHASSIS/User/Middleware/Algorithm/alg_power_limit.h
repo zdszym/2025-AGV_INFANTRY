@@ -60,7 +60,7 @@ class Class_Power_Limit
     float Chassis_Buffer;
     const float Min_Buffer = 10.0f; 
     const float Protected_Buffer = 30.0f;
-    float Target_Energy=30;
+    float Target_Energy=60;
     //转矩系数 rad转rpm系数
 	float Toque_Coefficient = 1.99688994e-6f * (3591/187) / 13.93f;  // (20/16384)*(0.3)*(187/3591)/9.55
 
