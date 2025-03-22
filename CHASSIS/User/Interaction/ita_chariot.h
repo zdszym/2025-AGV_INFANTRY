@@ -94,6 +94,34 @@ enum Enum_DR16_Control_Type
     DR16_Control_Type_KEYBOARD,
 };
 
+
+/*************************24舵步 */
+enum Enum_Booster_Jamming_Type
+{
+    Booster_Not_Jamming = 0,
+    Booster_Jamming,
+};
+
+typedef enum
+{
+    FOLLOW_ON = 0x01,
+    FOLLOW_OFF = 0x00,
+} FOLLOW_FLAG_E;
+
+typedef enum
+{
+    Booster_User_Control_Type_DISABLE = 0,
+    Booster_User_Control_Type_SINGLE = 1,
+    Booster_User_Control_Type_MULTI = 2,
+} FRIC_FLAG_E;
+
+typedef enum
+{
+    UI_Gimbal_Control_Type_DISABLE = 0,
+    UI_Gimbal_Control_Type_NORMAL,
+    UI_Gimbal_Control_Type_MINIPC,
+} GIMBAL_FLAG_E;
+
 /**
  * @brief 机器人是否离线 控制模式有限自动机
  *
@@ -196,6 +224,12 @@ public:
     // 裁判系统UI刷新状态
     Enum_Referee_UI_Refresh_Status Referee_UI_Refresh_Status = Referee_UI_Refresh_Status_DISABLE;
     // 底盘云台通讯数据
+
+    /*ui变量 */
+    GIMBAL_FLAG_E UI_Gimbal_Flag = UI_Gimbal_Control_Type_DISABLE;
+    FRIC_FLAG_E UI_Fric_Flag = Booster_User_Control_Type_DISABLE;
+    
+
     float Gimbal_Tx_Pitch_Angle = 0;
 
 protected:
