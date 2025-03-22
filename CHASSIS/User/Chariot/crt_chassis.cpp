@@ -50,10 +50,11 @@ void Class_Tricycle_Chassis::Init(float __Velocity_X_Max, float __Velocity_Y_Max
     Slope_Velocity_Y.Init(0.004f, 0.008f);
     // 斜坡函数加减速角速度
     Slope_Omega.Init(0.05f, 0.05f);
+    Filter_omega.Init(-10.0f, 10.0f, Filter_Fourier_Type_LOWPASS, 5, 0, 1000, 3);
 
 #ifdef POWER_LIMIT
-    // 超级电容初始化
-    Supercap.Init(&hcan2, 45);
+        // 超级电容初始化
+        Supercap.Init(&hcan2, 45);
 #endif
 // 全向轮类初始化
 #ifdef omni_wheel
@@ -265,22 +266,21 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_ChassisCoordinate();
 #endif
 #ifdef POWER_LIMIT
-    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
-    Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
-    Power_Limit.Energy_Control();
+    
+   
     /****************************超级电容***********************************/
 
-//    if (Referee->Get_Referee_Status() == Referee_Status_DISABLE)
-//    {
-//        Supercap.Set_Supercap_Mode(test_mode);
-//        Supercap.Set_Limit_Power(test_power);
-//    }
-
-//    else
-    {
-        Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max()-10.0);
-        Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
-    }
+#ifdef DISABLE_SUPEACAP
+    Supercap.Set_Supercap_Mode(Supercap_Mode_MONITOR);
+    Supercap.Set_Limit_Power(500);
+    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() );
+#else
+    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max()-10);
+    Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
+    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + Supercap.Get_Buffer_Power());
+#endif
+    Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
+    Power_Limit.Energy_Control();
 
     Supercap.TIM_Supercap_PeriodElapsedCallback();
 
