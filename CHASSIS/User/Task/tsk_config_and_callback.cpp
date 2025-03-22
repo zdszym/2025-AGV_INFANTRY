@@ -351,13 +351,23 @@ void MiniPC_USB_Callback(uint8_t *Buffer, uint32_t Length)
  * @brief TIM4任务回调函数
  *
  */
+static uint16_t start_time = 0;
+static uint16_t delta_time = 0;
 void Task100us_TIM4_Callback()
 {
 #ifdef CHASSIS
-    // static uint16_t Referee_Sand_Cnt = 0;
+    // 定义一个静态变量Referee_Sand_Cnt，用于计数
+    static uint16_t Referee_Sand_Cnt = 0;
     // //暂无云台tim4任务
-    // if(Referee_Sand_Cnt%10)
-    //     Task_Loop();
+    if (Referee_Sand_Cnt % 50 == 1)
+    {
+        start_time = DWT_GetTimeline_us();
+        //Task_Loop();
+        delta_time= DWT_GetTimeline_us() - start_time;
+            Referee_Sand_Cnt = 0;
+    }
+
+    Referee_Sand_Cnt++;
 
 #elif defined(GIMBAL)
     // 单给IMU消息开的定时器 ims
@@ -471,7 +481,7 @@ extern "C" void Task_Init()
     HAL_TIM_Base_Start_IT(&htim5);
 }
 float Chassis_Power;
-float remain_buff;
+float buff_power;
 /**
  * @brief 前台循环任务
  *
@@ -493,23 +503,29 @@ extern "C" void Task_Loop()
     }
 #endif
 #ifdef CHASSIS
-    //        JudgeReceiveData.robot_id = chariot.Referee.Get_ID();
-    //        JudgeReceiveData.Pitch_Angle = chariot.Gimbal_Tx_Pitch_Angle;  //pitch角度
-    //        JudgeReceiveData.Bullet_Status = chariot.Bulletcap_Status;      //弹舱
-    //        JudgeReceiveData.Fric_Status = chariot.Fric_Status;             //摩擦轮
-    //        JudgeReceiveData.Minipc_Satus = chariot.MiniPC_Status;         //自瞄是否离线
-    //        JudgeReceiveData.MiniPC_Aim_Status = chariot.MiniPC_Aim_Status;  //自瞄是否瞄准
-    //        JudgeReceiveData.Supercap_Energy = chariot.Chassis.Supercap.Get_Stored_Energy();  //超级电容储能
-    //        JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage();  //超级电容电压
-    //        JudgeReceiveData.Chassis_Control_Type = chariot.Chassis.Get_Chassis_Control_Type(); //底盘控制模式
-    //        if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
-    //            Init_Cnt=10;
-    //        GraphicSendtask();
+   if (start_flag == 1)
+   {
+       JudgeReceiveData.robot_id = chariot.Referee.Get_ID();
+       // JudgeReceiveData.robot_id = Referee_Data_Robots_ID_RED_HERO_1;
+       JudgeReceiveData.Pitch_Angle = chariot.Gimbal_Tx_Pitch_Angle;   // pitch角度
+       JudgeReceiveData.Bullet_Status = chariot.Bulletcap_Status;      // 弹舱
+       JudgeReceiveData.Fric_Status = chariot.Fric_Status;             // 摩擦轮
+       JudgeReceiveData.Minipc_Satus = chariot.MiniPC_Status;          // 自瞄是否离线
+       JudgeReceiveData.MiniPC_Aim_Status = chariot.MiniPC_Aim_Status; // 自瞄是否瞄准
+       // JudgeReceiveData.Supercap_Energy = chariot.Chassis.Supercap.Get_Stored_Energy();    // 超级电容储能
+       // JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage();     // 超级电容电压
+       JudgeReceiveData.Chassis_Control_Type = chariot.Chassis.Get_Chassis_Control_Type(); // 底盘控制模式
+       if (chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
+           Init_Cnt = 10;
+       GraphicSendtask();
+       // DWT_Delay(0.1);
+   }
 
-    Chassis_Power = chariot.Referee.Get_Chassis_Power();
-    remain_buff = chariot.Referee.Get_Chassis_Energy_Buffer();
-    printf("%f,%f,%f\n", Chassis_Power, remain_buff, test_k1);
-    HAL_Delay(10);
+    //  Chassis_Power = chariot.Chassis.Supercap.Get_Chassis_Power();
+    //  buff_power = chariot.Chassis.Supercap.Get_Buffer_Power();
+    //  printf("%f,%f\n", Chassis_Power, buff_power);
+    //  DWT_Delay(0.01);
+    
 #endif
 }
 
