@@ -459,7 +459,7 @@ void CapDraw(float CapVolt, uint8_t Init_Flag)
 		// if (CapVolt > 20.0f)
 		// {
 		// Length = 0;
-		// Length = 0.5 * SCREEN_LENGTH * chassis.supercap.supercap_per;
+		Length = 0.5 * SCREEN_LENGTH * chariot.Chassis.Supercap.Get_Now_Voltage() / 100.0f;
 		P_graphic_data = Line_Draw(0, Op_Change, 0.25 * SCREEN_LENGTH, 0.125 * SCREEN_WIDTH, 0.25 * SCREEN_LENGTH + Length, 0.125 * SCREEN_WIDTH, 27, Green, CapName2);
 		memcpy(data_pack, (uint8_t *)P_graphic_data, DRAWING_PACK);
 
@@ -503,6 +503,7 @@ void CharChange(uint8_t Init_Flag)
 
 	uint8_t SupercapOff[] = "OFF";
 	uint8_t SupercapOn[] = "ON";
+	uint8_t SupercapListen[] = "LISTEN";
 
 	uint8_t ArmorLost[] = "LOST";
 	uint8_t ArmorID_1[] = "ID_1";
@@ -544,16 +545,19 @@ void CharChange(uint8_t Init_Flag)
 	}
 	else
 	{
-		// switch (connection.connection_rx.supercap.flag)
-		// {
-		// case 0:
-		// 	Char_Draw(0, Op_Change, 0.42 * SCREEN_LENGTH + 100, 0.07 * SCREEN_WIDTH, 30, sizeof(SupercapOff), 2, Cyan, SupercapChangeName, SupercapOff);
-		// 	break;
+		switch (chariot.Chassis.Supercap.Get_Supercap_Status())
+		{
+		case Disconnected:
+			Char_Draw(0, Op_Change, 0.42 * SCREEN_LENGTH + 100, 0.07 * SCREEN_WIDTH, 30, sizeof(SupercapOff), 2, Cyan, SupercapChangeName, SupercapOff);
+			break;
 
-		// case 1:
-		// 	Char_Draw(0, Op_Change, 0.42 * SCREEN_LENGTH + 100, 0.07 * SCREEN_WIDTH, 30, sizeof(SupercapOn), 2, Green, SupercapChangeName, SupercapOn);
-		// 	break;
-		// }
+		case Normal:
+			Char_Draw(0, Op_Change, 0.42 * SCREEN_LENGTH + 100, 0.07 * SCREEN_WIDTH, 30, sizeof(SupercapOn), 2, Green, SupercapChangeName, SupercapOn);
+			break;
+		case Listen:
+			Char_Draw(0, Op_Change, 0.42 * SCREEN_LENGTH + 100, 0.07 * SCREEN_WIDTH, 30, sizeof(SupercapOn), 2, Purple, SupercapChangeName, SupercapListen);
+			break;
+		}
 	}
 
 	/*云台状态改变*/
@@ -610,7 +614,7 @@ void CharChange(uint8_t Init_Flag)
 
 		case Booster_User_Control_Type_SINGLE:
 			Char_Draw(0, Op_Change, 0.9 * SCREEN_LENGTH, 0.50 * SCREEN_WIDTH, 20, sizeof(FrictionSingle), 2, Pink, FrictionChangeName, FrictionSingle);
-
+			break;
 		case Booster_User_Control_Type_MULTI:
 			Char_Draw(0, Op_Change, 0.9 * SCREEN_LENGTH, 0.50 * SCREEN_WIDTH, 20, sizeof(FrictionMulti), 2, Pink, FrictionChangeName, FrictionMulti);
 			break;
@@ -708,9 +712,9 @@ void Char_Init(void)
 	uint8_t friction_char[] = "FRICTION :";
 	Char_Draw(0, Op_Add, 0.80 * SCREEN_LENGTH, 0.50 * SCREEN_WIDTH, 20, sizeof(friction_char), 2, Yellow, FrictionName, friction_char);
 
-	/*              ARMOR字符*/
-	uint8_t armor_char[] = "ARMOR :";
-	Char_Draw(0, Op_Add, 0.80 * SCREEN_LENGTH, 0.45 * SCREEN_WIDTH, 20, sizeof(armor_char), 2, Yellow, ArmorName, armor_char);
+	// /*              ARMOR字符*/
+	// uint8_t armor_char[] = "ARMOR :";
+	// Char_Draw(0, Op_Add, 0.80 * SCREEN_LENGTH, 0.45 * SCREEN_WIDTH, 20, sizeof(armor_char), 2, Yellow, ArmorName, armor_char);
 
 	/*              FIREMODE字符*/
 	uint8_t fire_char[] = "CHASSIS :";
@@ -784,7 +788,7 @@ void GraphicSendtask(void)
 	start_time = DWT_GetTimeline_us();
 	CharChange(Init_Cnt);
 	delta_time = DWT_GetTimeline_us() - start_time;
-	PitchUI_Change(JudgeReceiveData.Pitch_Angle, Init_Cnt);
+	// PitchUI_Change(JudgeReceiveData.Pitch_Angle, Init_Cnt);
 	CapDraw(JudgeReceiveData.Supercap_Voltage, Init_Cnt);
 	// MiniPC_Aim_Change(Init_Cnt);
 	CapUI_Change(JudgeReceiveData.Supercap_Voltage, Init_Cnt);

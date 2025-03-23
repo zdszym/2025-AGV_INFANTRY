@@ -168,7 +168,7 @@ inline float Class_Supercap::Get_Buffer_Power()
 inline Enum_Supercap_Status
 Class_Supercap::Get_Supercap_Status()
 {
-    return (Supercap_Status);
+    return (Supercap_Data.Supercap_Status);
 }
 
 /**

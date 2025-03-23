@@ -29,11 +29,13 @@
         ///#define POWER_LIMIT_NEW_CONTROL
         #define POWER_LIMIT_OLD_CONTROL
     #endif
-
+#define DISABLE_SUPEACAP
     #define SPEED_SLOPE
     //#define omni_wheel
     #define steering_wheel
 #endif
+
+
 
 
 /* Exported types ------------------------------------------------------------*/
