@@ -105,7 +105,7 @@ protected:
 
     //常量
     //底盘标定参考正方向角度(数据来源yaw电机)
-    float Reference_Angle = 2.23402;
+    float Reference_Angle = 2.45360231;
     //底盘转换后的角度（数据来源yaw电机）
     float Chassis_Angle;
 

@@ -208,7 +208,7 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
 
     if (DR16.Get_DR16_Status() != DR16_Status_DISABLE && DR16.Get_Left_Switch() == DR16_Switch_Status_UP)
     {
-        if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
+        if (DR16.Get_Right_Switch() == DR16_Switch_Status_DOWN)
             Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_ANTI_SPIN);
         else if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
             Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_SPIN);
