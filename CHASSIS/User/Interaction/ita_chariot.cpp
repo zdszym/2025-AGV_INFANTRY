@@ -126,7 +126,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
         // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
-        chassis_omega = PI *2;
+        chassis_omega = PI *2*0.6;
     }
     //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     //    {
@@ -143,7 +143,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     //        chassis_omega = -PID_Chassis_Fllow.Get_Out();
     //    }
 		else if(Chassis.Get_Chassis_Control_Type()==Chassis_Control_Type_ANTI_SPIN){
-			chassis_omega=-PI*2;
+			chassis_omega=-PI*2*0.6;
 		}
 			
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)

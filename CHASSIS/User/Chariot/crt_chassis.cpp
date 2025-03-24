@@ -368,7 +368,7 @@ void Class_Tricycle_Chassis::AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_Ch
     float speed_B = Target_Wheel_Omega[1];
     float speed_C = Target_Wheel_Omega[2];
     float speed_D = -Target_Wheel_Omega[3];
-.... 
+
     // 如果是刹车模式
     if (Target_Velocity_X == 0 && Target_Velocity_Y == 0 && Target_Omega == 0)
     {
