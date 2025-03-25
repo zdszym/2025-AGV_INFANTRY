@@ -129,7 +129,6 @@ void Chassis_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
     break;
     case (0x205):
     {
-        
     }
     break;
     }
@@ -174,21 +173,17 @@ void Gimbal_Device_CAN1_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 #ifdef GIMBAL
 void Gimbal_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 {
-    
+
     switch (CAN_RxMessage->Header.StdId)
     {
 
-    case (0x1fe): // 留给下板通讯
+    case (0x88): // 留给下板通讯
     {
-        
-        chariot.Referee.CAN_RxCpltCallback(CAN_RxMessage->Data,CAN_RxMessage->Header.StdId);
-        
+
+        chariot.CAN_Gimbal_RxCpltCallback(CAN_RxMessage->Data); 
     }
     break;
-    case (0x200): // 留给下板通讯
-    {
-        chariot.Referee.CAN_RxCpltCallback(CAN_RxMessage->Data,CAN_RxMessage->Header.StdId);
-    }
+
     break;
     case (0x203):
     {
@@ -198,7 +193,6 @@ void Gimbal_Device_CAN2_Callback(Struct_CAN_Rx_Buffer *CAN_RxMessage)
 
     case (0x204):
     {
-        
     }
     break;
     case (0x205):
@@ -241,16 +235,18 @@ void Device_SPI1_Callback(uint8_t *Tx_Buffer, uint8_t *Rx_Buffer, uint16_t Lengt
 }
 
 /**
- * @brief UART1图传链路回调函数
+ * @brief UART6图传链路回调函数
  *
- * @param Buffer UART1收到的消息
+ * @param Buffer UART6收到的消息
  * @param Length 长度
  */
 #ifdef GIMBAL
-void Transmission_UART1_Callback(uint8_t *Buffer, uint16_t Length)
+void Transmission_UART6_Callback(uint8_t *Buffer, uint16_t Length)
 {
-    chariot.Referee.UART_RxCpltCallback(Buffer);
+    chariot.DR16.Image_UART_RxCpltCallback(Buffer);
 
+    // 底盘 云台 发射机构 的控制策略
+    chariot.TIM_Control_Callback();
 }
 #endif
 
@@ -264,10 +260,9 @@ void Transmission_UART1_Callback(uint8_t *Buffer, uint16_t Length)
 void DR16_UART3_Callback(uint8_t *Buffer, uint16_t Length)
 {
     chariot.DR16.UART_RxCpltCallback(Buffer);
-	
-	    // 底盘 云台 发射机构 的控制策略
-    chariot.TIM_Control_Callback();
 
+    // 底盘 云台 发射机构 的控制策略
+    chariot.TIM_Control_Callback();
 }
 #endif
 
@@ -312,13 +307,13 @@ void SuperCAP_UART1_Callback(uint8_t *Buffer, uint16_t Length)
  *
  * @param Length 长度
  */
- 
- float freq;
- uint32_t time_s;
+
+float freq;
+uint32_t time_s;
 #ifdef GIMBAL
 void MiniPC_USB_Callback(uint8_t *Buffer, uint32_t Length)
 {
-	freq=1/DWT_GetDeltaT(&time_s);
+    freq = 1 / DWT_GetDeltaT(&time_s);
     chariot.MiniPC.USB_RxCpltCallback(Buffer);
 }
 #endif
@@ -339,8 +334,6 @@ void Task100us_TIM3_Callback()
 #endif
 }
 
-
-
 /**
  * @brief TIM5任务回调函数
  *
@@ -350,23 +343,22 @@ uint16_t pwmVal = 300;
 void Task1ms_TIM5_Callback()
 {
     init_finished++;
-    if(init_finished <3000)
-		{
-			buzzer_setTask(&buzzer,BUZZER_CALIBRATING_PRIORITY);
-		}
-    if (init_finished > 3000)//等待IMU稳定后开始控制
+    if (init_finished < 3000)
+    {
+        buzzer_setTask(&buzzer, BUZZER_CALIBRATING_PRIORITY);
+    }
+    if (init_finished > 3000) // 等待IMU稳定后开始控制
         start_flag = 1;
-		
 
     /************ 判断设备在线状态判断 50ms (所有device:电机，遥控器，裁判系统等) ***************/
 
     chariot.TIM1msMod50_Alive_PeriodElapsedCallback();
-  
+
     /****************************** 交互层回调函数 1ms *****************************************/
     if (start_flag == 1)
     {
         chariot.TIM_Calculate_PeriodElapsedCallback();
-			  buzzer_setTask(&buzzer,BUZZER_CALIBRATED_PRIORITY);
+        buzzer_setTask(&buzzer, BUZZER_CALIBRATED_PRIORITY);
 
         /****************************** 驱动层回调函数 1ms *****************************************/
 
@@ -374,8 +366,7 @@ void Task1ms_TIM5_Callback()
         TIM_CAN_PeriodElapsedCallback();
 
         TIM_UART_PeriodElapsedCallback();
-		
-	   
+
 #ifdef GIMBAL
         //        __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, pwmVal);
 #endif
@@ -389,8 +380,9 @@ void Task1ms_TIM5_Callback()
         }
     }
 }
-void Task1ms_TIM6_Callback(){
-   //buzzer_taskScheduler(&buzzer);
+void Task1ms_TIM6_Callback()
+{
+    // buzzer_taskScheduler(&buzzer);
 }
 
 /**
@@ -434,6 +426,8 @@ void Task_Init()
     // 遥控器接收
     UART_Init(&huart3, DR16_UART3_Callback, 18);
 
+    UART_Init(&huart6, Transmission_UART6_Callback, 40);
+
     // 上位机USB
     USB_Init(&MiniPC_USB_Manage_Object, MiniPC_USB_Callback);
 
@@ -446,7 +440,7 @@ void Task_Init()
     // 定时器循环任务
     TIM_Init(&htim3, Task100us_TIM3_Callback);
     TIM_Init(&htim5, Task1ms_TIM5_Callback);
-     TIM_Init(&htim6, Task1ms_TIM6_Callback);
+    TIM_Init(&htim6, Task1ms_TIM6_Callback);
 
     /********************************* 设备层初始化 *********************************/
 
@@ -473,6 +467,5 @@ void Task_Init()
 void Task_Loop()
 {
 }
-
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

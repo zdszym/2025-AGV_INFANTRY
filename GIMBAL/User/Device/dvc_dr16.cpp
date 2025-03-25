@@ -189,6 +189,62 @@ void Class_DR16::Judge_Key(Enum_DR16_Key_Status *Key, uint8_t Status, uint8_t Pr
 }
 
 /**
+ * @brief 数据处理过程
+ *
+ */
+void Class_DR16::Image_Data_Process(uint8_t *__rx_buffer)
+{
+    // 获取当前原始值数据
+    memcpy(&Now_UART_Image_Rx_Data, __rx_buffer, sizeof(Struct_Image_UART_Data));
+    // 数据处理过程
+    Struct_Image_UART_Data *tmp_buffer = (Struct_Image_UART_Data *)__rx_buffer;
+
+    /*源数据转为对外数据*/
+
+    // 鼠标信息
+    Data.Mouse_X = tmp_buffer->Mouse_X / 32768.0f;
+    Data.Mouse_Y = tmp_buffer->Mouse_Y / 32768.0f;
+    Data.Mouse_Z = tmp_buffer->Mouse_Z / 32768.0f;
+
+    // 判断鼠标触发
+    Judge_Key(&Data.Mouse_Left_Key, tmp_buffer->Mouse_Left_Key, Pre_UART_Image_Rx_Data.Mouse_Left_Key);
+    Judge_Key(&Data.Mouse_Right_Key, tmp_buffer->Mouse_Right_Key, Pre_UART_Image_Rx_Data.Mouse_Right_Key);
+
+    // 判断键盘触发
+    for (int i = 0; i < 16; i++)
+    {
+        Judge_Key(&Data.Keyboard_Key[i], ((tmp_buffer->Keyboard_Key) >> i) & 0x1, ((Pre_UART_Image_Rx_Data.Keyboard_Key) >> i) & 0x1);
+    }
+}
+
+/**
+ * @brief UART通信接收回调函数
+ *
+ * @param Rx_Data 接收的数据
+ */
+
+void Class_DR16::Image_UART_RxCpltCallback(uint8_t *Rx_Data)
+{
+    if (Rx_Data[0] == 0xA5)
+    {
+        uint16_t cmd_id, data_length;
+        // 数据处理过程
+        cmd_id = (Rx_Data[6]) & 0xff;
+        cmd_id = (cmd_id << 8) | Rx_Data[5];
+        data_length = Rx_Data[2] & 0xff;
+        data_length = (data_length << 8) | Rx_Data[1];
+        if (cmd_id == 0x0304 && data_length == 12)
+        {
+            // 滑动窗口, 判断遥控器是否在线
+            Image_Flag += 1;
+            Image_Data_Process(&Rx_Data[7]);
+            // 保留上一次数据
+            memcpy(&Pre_UART_Image_Rx_Data, &Rx_Data[7], sizeof(Struct_Image_UART_Data));
+        }
+    }
+}
+
+/**
  * @brief 判断遥控器更新状态
  *
  */
@@ -274,7 +330,7 @@ void Class_DR16::UART_RxCpltCallback(uint8_t *Rx_Data)
 void Class_DR16::TIM1msMod50_Alive_PeriodElapsedCallback()
 {
     // 判断该时间段内是否接收过遥控器数据
-    if (Flag == Pre_Flag)
+    if (Flag == Pre_Flag && Image_Flag == Pre_Image_Flag)
     {
         // 遥控器断开连接
         DR16_Status = DR16_Status_DISABLE;
@@ -292,6 +348,7 @@ void Class_DR16::TIM1msMod50_Alive_PeriodElapsedCallback()
         DR16_Status = DR16_Status_ENABLE;
     }
     Pre_Flag = Flag;
+    Pre_Image_Flag = Image_Flag;
 }
 
 /************************ COPYRIGHT(C) USTC-ROBOWALKER **************************/

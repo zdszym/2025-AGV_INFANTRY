@@ -167,9 +167,25 @@ void Class_Chariot::CAN_Chassis_Control_RxCpltCallback()
  *
  */
 #ifdef GIMBAL
-void Class_Chariot::CAN_Gimbal_RxCpltCallback()
+void Class_Chariot::CAN_Gimbal_RxCpltCallback(uint8_t *data)
 {
+
+    Enum_Referee_Data_Robots_ID robo_id;
+    Enum_Referee_Game_Status_Stage game_stage;
+    uint16_t Booster_17mm_1_Heat;
+    uint16_t Shooter_Barrel_Heat_Limit;
+
+    robo_id = (Enum_Referee_Data_Robots_ID)CAN_Manage_Object->Rx_Buffer.Data[0];
+    game_stage = (Enum_Referee_Game_Status_Stage)CAN_Manage_Object->Rx_Buffer.Data[1];
+    memcpy(&Shooter_Barrel_Heat_Limit, CAN_Manage_Object->Rx_Buffer.Data + 2, sizeof(uint16_t));
+    memcpy(&Booster_17mm_1_Heat, CAN_Manage_Object->Rx_Buffer.Data + 4, sizeof(uint16_t));
+
+    Referee.Robot_Status.Robot_ID= robo_id;
+    Referee.Game_Status.Stage_Enum = game_stage;
+    Referee.Robot_Status.Booster_17mm_1_Heat_Max = Shooter_Barrel_Heat_Limit;
+    Referee.Robot_Power_Heat.Booster_17mm_1_Heat = Booster_17mm_1_Heat;
 }
+
 
 float gimbal_velocity_x = 0, gimbal_velocity_y = 0;
 
@@ -222,7 +238,7 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
     CAN2_0x152_Tx_Data[0] = Chassis.Get_Chassis_Control_Type();
     //		CAN2_0x152_Tx_Data[0] =0	;
     CAN2_0x152_Tx_Data[1] = MiniPC.Get_Vision_Mode();
-    CAN2_0x152_Tx_Data[2] = Chassis.Get_Supercap_State();
+    CAN2_0x152_Tx_Data[2] = Chassis.Sprint_Status;
     CAN2_0x152_Tx_Data[3] = Booster.Get_Booster_Control_Type(); // 摩擦轮状态
     CAN2_0x152_Tx_Data[4] = Gimbal.Get_Gimbal_Control_Type();   // 云台状态
     CAN2_0x152_Tx_Data[5] = MiniPC.Get_MiniPC_Status();
@@ -323,10 +339,12 @@ void Class_Chariot::Control_Chassis()
 
             if (DR16.Get_Keyboard_Key_Shift() == DR16_Key_Status_PRESSED)
             {
-                Chassis.Set_Supercap_State(SUPERCAP_ON);
+                Chassis.Sprint_Status = Sprint_Status_ENABLE;
+                // Chassis.Set_Supercap_State(SUPERCAP_ON);
             }
             else
             {
+                Chassis.Sprint_Status = Sprint_Status_DISABLE;
                 Chassis.Set_Supercap_State(SUPERCAP_OFF);
             }
             // }
@@ -443,8 +461,8 @@ void Class_Chariot::Control_Gimbal()
                         tmp_gimbal_yaw = MiniPC.Get_Rx_Yaw_Angle();
                         tmp_gimbal_pitch = MiniPC.Get_Rx_Pitch_Angle();
                         // 键盘遥控器操作逻辑
-                        tmp_gimbal_yaw -= DR16.Get_Mouse_X() * DR16_Mouse_Yaw_Angle_Resolution * 10;
-                        tmp_gimbal_pitch -= DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution * 10;
+                        tmp_gimbal_yaw -= DR16.Get_Mouse_X() * DR16_Mouse_Yaw_Angle_Resolution * 50;
+                        tmp_gimbal_pitch -= DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution * 50;
                     }
                 }
                 if (Gimbal.Get_Gimbal_Control_Type() == Gimbal_Control_Type_NORMAL || MiniPC.Get_MiniPC_Status() == MiniPC_Data_Status_DISABLE)
@@ -686,7 +704,7 @@ void Class_Chariot::TIM1msMod50_Alive_PeriodElapsedCallback()
 {
     static int mod50 = 0;
     mod50++;
-    if (mod50 == 50)
+    if (mod50 == 100)
     {
 #ifdef CHASSIS
 

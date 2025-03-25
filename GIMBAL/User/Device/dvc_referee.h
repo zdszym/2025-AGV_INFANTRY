@@ -1052,6 +1052,46 @@ public:
     void UART_RxCpltCallback(uint8_t *Rx_Data);
     void TIM1msMod50_Alive_PeriodElapsedCallback();
     void CAN_RxCpltCallback(uint8_t *Rx_Data, uint32_t id);
+    // 裁判系统状态
+    Enum_Referee_Status Referee_Status = Referee_Status_DISABLE;
+    // 比赛状态
+    Struct_Referee_Rx_Data_Game_Status Game_Status;
+    // 比赛结果
+    Struct_Referee_Rx_Data_Game_Result Game_Result;
+    // 机器人血量
+    Struct_Referee_Rx_Data_Game_Robot_HP Game_Robot_HP;
+    // 场地事件
+    Struct_Referee_Rx_Data_Event_Data Event_Data;
+    // 补给站状态
+    Struct_Referee_Rx_Data_Event_Supply Event_Supply;
+    // 裁判警告信息
+    Struct_Referee_Rx_Data_Event_Referee_Warning Event_Referee_Warning;
+    // 飞镖15s倒计时
+    Struct_Referee_Rx_Data_Event_Dart_Remaining_Time Event_Dart_Remaining_Time;
+    // 机器人状态
+    Struct_Referee_Rx_Data_Robot_Status Robot_Status;
+    // 当前机器人实时功率热量
+    Struct_Referee_Rx_Data_Robot_Power_Heat Robot_Power_Heat;
+    // 当前机器人实时位置
+    Struct_Referee_Rx_Data_Robot_Position Robot_Position;
+    // 当前机器人增益
+    Struct_Referee_Rx_Data_Robot_Buff Robot_Buff;
+    // 无人机可攻击时间
+    Struct_Referee_Rx_Data_Robot_Aerial_Energy Robot_Aerial_Energy;
+    // 伤害情况
+    Struct_Referee_Rx_Data_Robot_Damage Robot_Damage;
+    // 子弹信息
+    Struct_Referee_Rx_Data_Robot_Booster Robot_Booster;
+    // 子弹剩余信息
+    Struct_Referee_Rx_Data_Robot_Remaining_Ammo Robot_Remaining_Ammo;
+    // RFID状态信息
+    Struct_Referee_Rx_Data_Robot_RFID Robot_RFID;
+    // 飞镖状态
+    Struct_Referee_Rx_Data_Robot_Dart_Command Robot_Dart_Command;
+    // 客户端接收小地图交互信息
+    Struct_Referee_Tx_Data_Interaction_Client_Receive Interaction_Client_Receive;
+    // 图传链路
+    Struct_Referee_Tx_Data_Interaction_Remote_Control Interaction_Remote_Control;
 
 protected:
     // 初始化相关常量
@@ -1072,46 +1112,7 @@ protected:
 
     //读变量
 
-    //裁判系统状态
-    Enum_Referee_Status Referee_Status = Referee_Status_DISABLE;
-    //比赛状态
-    Struct_Referee_Rx_Data_Game_Status Game_Status;
-    //比赛结果
-    Struct_Referee_Rx_Data_Game_Result Game_Result;
-    //机器人血量
-    Struct_Referee_Rx_Data_Game_Robot_HP Game_Robot_HP;
-    //场地事件
-    Struct_Referee_Rx_Data_Event_Data Event_Data;
-    //补给站状态
-    Struct_Referee_Rx_Data_Event_Supply Event_Supply;
-    //裁判警告信息
-    Struct_Referee_Rx_Data_Event_Referee_Warning Event_Referee_Warning;
-    //飞镖15s倒计时
-    Struct_Referee_Rx_Data_Event_Dart_Remaining_Time Event_Dart_Remaining_Time;
-    //机器人状态
-    Struct_Referee_Rx_Data_Robot_Status Robot_Status;
-    //当前机器人实时功率热量
-    Struct_Referee_Rx_Data_Robot_Power_Heat Robot_Power_Heat;
-    //当前机器人实时位置
-    Struct_Referee_Rx_Data_Robot_Position Robot_Position;
-    //当前机器人增益
-    Struct_Referee_Rx_Data_Robot_Buff Robot_Buff;
-    //无人机可攻击时间
-    Struct_Referee_Rx_Data_Robot_Aerial_Energy Robot_Aerial_Energy;
-    //伤害情况
-    Struct_Referee_Rx_Data_Robot_Damage Robot_Damage;
-    //子弹信息
-    Struct_Referee_Rx_Data_Robot_Booster Robot_Booster;
-    //子弹剩余信息
-    Struct_Referee_Rx_Data_Robot_Remaining_Ammo Robot_Remaining_Ammo;
-    // RFID状态信息
-    Struct_Referee_Rx_Data_Robot_RFID Robot_RFID;
-    //飞镖状态
-    Struct_Referee_Rx_Data_Robot_Dart_Command Robot_Dart_Command;
-    //客户端接收小地图交互信息
-    Struct_Referee_Tx_Data_Interaction_Client_Receive Interaction_Client_Receive;
-    //图传链路
-    Struct_Referee_Tx_Data_Interaction_Remote_Control Interaction_Remote_Control;
+
 
     // 写变量
 

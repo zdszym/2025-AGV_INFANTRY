@@ -146,7 +146,20 @@ struct Struct_DR16_Data
     Enum_DR16_Key_Status Keyboard_Key[16];
     float Wheel;
 };
-
+/**
+ * @brief 图传键鼠源数据
+ *
+ */
+struct Struct_Image_UART_Data
+{
+    int16_t Mouse_X;
+    int16_t Mouse_Y;
+    int16_t Mouse_Z;
+    int8_t Mouse_Left_Key;
+    int8_t Mouse_Right_Key;
+    uint16_t Keyboard_Key;
+    uint16_t reserved;
+} __attribute__((packed));
 /**
  * @brief Specialized, 遥控器
  *
@@ -190,6 +203,7 @@ public:
 
     void UART_RxCpltCallback(uint8_t *Rx_Data);
     void TIM1msMod50_Alive_PeriodElapsedCallback();
+    void Image_UART_RxCpltCallback(uint8_t *Rx_Data);
 
 protected:
     //初始化相关常量
@@ -209,11 +223,18 @@ protected:
     Struct_DR16_UART_Data Now_UART_Rx_Data;
     //前一时刻的遥控器状态信息
     Struct_DR16_UART_Data Pre_UART_Rx_Data;
+
+    Struct_Image_UART_Data Now_UART_Image_Rx_Data;
+    Struct_Image_UART_Data Pre_UART_Image_Rx_Data;
+
     //当前时刻的遥控器接收flag
     uint32_t Flag = 0;
     //前一时刻的遥控器接收flag
     uint32_t Pre_Flag = 0;
-
+    // 当前时刻的遥控器接收flag
+    uint32_t Image_Flag = 0;
+    // 前一时刻的遥控器接收flag
+    uint32_t Pre_Image_Flag = 0;
     //读变量
 
     //遥控器状态
@@ -231,7 +252,9 @@ protected:
 
     void Judge_Switch(Enum_DR16_Switch_Status *Switch, uint8_t Status, uint8_t Pre_Status);
     void Judge_Key(Enum_DR16_Key_Status *Key, uint8_t Status, uint8_t Pre_Status);
-    void Judge_Updata(Struct_DR16_UART_Data Pre_UART_Rx_Data,Struct_DR16_UART_Data Now_UART_Rx_Data);
+    void Image_Data_Process(uint8_t *__rx_buffer);
+   
+    void Judge_Updata(Struct_DR16_UART_Data Pre_UART_Rx_Data, Struct_DR16_UART_Data Now_UART_Rx_Data);
     void Data_Process();
 };
 
