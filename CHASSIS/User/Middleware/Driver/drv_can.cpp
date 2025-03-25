@@ -273,6 +273,8 @@ void TIM_CAN_PeriodElapsedCallback()
 
     if (mod5 == 5)
     {
+        // 上板
+        CAN_Send_Data(&hcan2, 0x88, CAN2_Chassis_Tx_Gimbal_Data, 8);
         CAN_Send_Data(&hcan1, 0x01e, CAN1_0x01E_Tx_Data, 8);
         mod5 = 0;
     }
@@ -295,8 +297,7 @@ void TIM_CAN_PeriodElapsedCallback()
     }
 #endif
 
-    // 上板
-    // CAN_Send_Data(&hcan2, 0x88, CAN2_Chassis_Tx_Gimbal_Data, 8);
+   
 
 #elif defined(GIMBAL)
 

@@ -94,7 +94,6 @@ enum Enum_DR16_Control_Type
     DR16_Control_Type_KEYBOARD,
 };
 
-
 /*************************24舵步 */
 enum Enum_Booster_Jamming_Type
 {
@@ -121,6 +120,12 @@ typedef enum
     UI_Gimbal_Control_Type_NORMAL,
     UI_Gimbal_Control_Type_MINIPC,
 } GIMBAL_FLAG_E;
+
+typedef enum
+{
+    SUPERCAP_ON = 0x01,
+    SUPERCAP_OFF = 0x00,
+} Enum_SUPERCAP_FLAG_E;
 
 /**
  * @brief 机器人是否离线 控制模式有限自动机
@@ -179,7 +184,8 @@ public:
     void CAN_Chassis_Tx_Gimbal_Callback();
     void TIM1msMod50_Gimbal_Communicate_Alive_PeriodElapsedCallback();
     void CAN_Chassis_Tx_Max_Power_Callback();
-    void CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data);;
+    void CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data);
+    ;
 #elif defined(GIMBAL)
 
     inline void DR16_Offline_Cnt_Plus();
@@ -212,7 +218,7 @@ public:
 
     // 底盘云台通讯变量
     // 冲刺
-    Enum_Sprint_Status Sprint_Status = Sprint_Status_DISABLE;
+    Enum_Sprint_Status Sprint_Status = Sprint_Status_ENABLE;
     // 弹仓开关
     Enum_Bulletcap_Status Bulletcap_Status = Bulletcap_Status_CLOSE;
     // 摩擦轮开关
@@ -228,14 +234,13 @@ public:
     /*ui变量 */
     GIMBAL_FLAG_E UI_Gimbal_Flag = UI_Gimbal_Control_Type_DISABLE;
     FRIC_FLAG_E UI_Fric_Flag = Booster_User_Control_Type_DISABLE;
-    
-
+    Enum_SUPERCAP_FLAG_E Supercap_Flag = SUPERCAP_OFF;
     float Gimbal_Tx_Pitch_Angle = 0;
 
 protected:
     // pitch控制状态 锁定和自由控制
     Enum_Pitch_Control_Status Pitch_Control_Status = Pitch_Status_Control_Free;
-
+   
     // 初始化相关常量
 
     // 绑定的CAN

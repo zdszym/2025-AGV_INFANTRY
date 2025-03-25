@@ -116,9 +116,11 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
 
     Chassis_Angle = Motor_Yaw.Get_Now_Radian();
     derta_angle = Chassis_Angle - Reference_Angle + Offset_Angle;
-
+    
     // 设定底盘控制类型
     Chassis.Set_Chassis_Control_Type((Enum_Chassis_Control_Type)CAN_Manage_Object->Rx_Buffer.Data[0]);
+   // Supercap_Flag = (Enum_SUPERCAP_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[2];
+    Sprint_Status = (Enum_Sprint_Status)CAN_Manage_Object->Rx_Buffer.Data[2];
     UI_Fric_Flag = (FRIC_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[3];
     UI_Gimbal_Flag = (GIMBAL_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[4];
     Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)CAN_Manage_Object->Rx_Buffer.Data[7];
@@ -126,7 +128,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
         // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
-        chassis_omega = PI *2*0.6;
+        chassis_omega = PI * 2 * 0.6;
     }
     //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     //    {
@@ -142,10 +144,11 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     //        PID_Chassis_Fllow.TIM_Adjust_PeriodElapsedCallback();
     //        chassis_omega = -PID_Chassis_Fllow.Get_Out();
     //    }
-		else if(Chassis.Get_Chassis_Control_Type()==Chassis_Control_Type_ANTI_SPIN){
-			chassis_omega=-PI*2*0.6;
-		}
-			
+    else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_ANTI_SPIN)
+    {
+        chassis_omega = -PI * 2 * 0.6;
+    }
+
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
     {
         chassis_omega = 0;
@@ -550,16 +553,16 @@ void Class_Chariot::Control_Booster()
 #ifdef CHASSIS
 void Class_Chariot::CAN_Chassis_Tx_Gimbal_Callback()
 {
-    uint16_t Shooter_Barrel_Cooling_Value;
+    uint16_t Shooter_Barrel_Heat;
     uint16_t Shooter_Barrel_Heat_Limit;
     Shooter_Barrel_Heat_Limit = Referee.Get_Booster_17mm_1_Heat_Max();
-    Shooter_Barrel_Cooling_Value = Referee.Get_Booster_17mm_1_Heat_CD();
+    Shooter_Barrel_Heat = Referee.Get_Booster_17mm_1_Heat();
 
     // 发送数据给云台
     CAN2_Chassis_Tx_Gimbal_Data[0] = Referee.Get_ID();
     CAN2_Chassis_Tx_Gimbal_Data[1] = Referee.Get_Game_Stage();
     memcpy(CAN2_Chassis_Tx_Gimbal_Data + 2, &Shooter_Barrel_Heat_Limit, sizeof(uint16_t));
-    memcpy(CAN2_Chassis_Tx_Gimbal_Data + 4, &Shooter_Barrel_Cooling_Value, sizeof(uint16_t));
+    memcpy(CAN2_Chassis_Tx_Gimbal_Data + 4, &Shooter_Barrel_Heat, sizeof(uint16_t));
 }
 #endif
 

@@ -53,8 +53,8 @@ void Class_Tricycle_Chassis::Init(float __Velocity_X_Max, float __Velocity_Y_Max
     Filter_omega.Init(-10.0f, 10.0f, Filter_Fourier_Type_LOWPASS, 5, 0, 1000, 3);
 
 #ifdef POWER_LIMIT
-        // 超级电容初始化
-        Supercap.Init(&hcan2, 45);
+    // 超级电容初始化
+    Supercap.Init(&hcan2, 45);
 #endif
 // 全向轮类初始化
 #ifdef omni_wheel
@@ -239,6 +239,7 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 
 Enum_Supercap_Mode test_mode = Supercap_Mode_ENABLE;
 float test_power = 58.0f;
+float compensate_max_power = 30.0f;
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -266,18 +267,33 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     AGV_DirectiveMotor_TargetStatus_To_MotorAngle_In_ChassisCoordinate();
 #endif
 #ifdef POWER_LIMIT
-    
-   
+
     /****************************超级电容***********************************/
 
 #ifdef DISABLE_SUPEACAP
     Supercap.Set_Supercap_Mode(Supercap_Mode_MONITOR);
     Supercap.Set_Limit_Power(500);
-    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() );
+    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
 #else
-    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max()-10);
+    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max() - 10);
     Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
-    Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + Supercap.Get_Buffer_Power());
+    __Sprint_Status=Sprint_Status_ENABLE;
+    if (__Sprint_Status == Sprint_Status_ENABLE)
+    {
+        Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + Supercap.Get_Buffer_Power());
+    }
+    else
+    {
+        if (Supercap.Get_Buffer_Power() >= compensate_max_power)
+        {
+            Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + compensate_max_power);
+        }
+        else
+        {
+            Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
+        }
+    }
+
 #endif
     Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
     Power_Limit.Energy_Control();

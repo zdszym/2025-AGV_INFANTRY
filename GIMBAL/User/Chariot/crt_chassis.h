@@ -58,6 +58,12 @@ typedef enum
     UI_INIT_ON = 0x01,
     UI_INIT_OFF = 0x00,
 } Enum_UI_INIT_FLAG_E;
+
+enum Enum_Sprint_Status : uint8_t
+{
+    Sprint_Status_DISABLE = 0,
+    Sprint_Status_ENABLE,
+};
 /**
  * @brief Specialized, 三轮舵轮底盘类
  *
@@ -114,6 +120,8 @@ public:
     inline void Set_Velocity_X_Max(float __Velocity_X_Max);
 
     void TIM_Calculate_PeriodElapsedCallback();
+
+    Enum_Sprint_Status Sprint_Status = Sprint_Status_DISABLE;
 
 protected:
     // 初始化相关常量
