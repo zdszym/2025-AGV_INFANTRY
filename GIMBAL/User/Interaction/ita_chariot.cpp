@@ -296,9 +296,7 @@ void Class_Chariot::Control_Chassis()
                 Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_SPIN);
             }
         }
-        // 遥控器键盘鼠标操作逻辑,右下键鼠操作
-        // if ((DR16.Get_Right_Switch() == DR16_Switch_Status_DOWN))
-        // {
+
         else if (Get_DR16_Control_Type() == DR16_Control_Type_KEYBOARD)
         {
             if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
@@ -347,28 +345,9 @@ void Class_Chariot::Control_Chassis()
                 Chassis.Sprint_Status = Sprint_Status_DISABLE;
                 Chassis.Set_Supercap_State(SUPERCAP_OFF);
             }
-            // }
-            // else
-            // {
-            //     // 遥控器操作逻辑
-
-            // 排除遥控器死区
-
-            //     if (DR16.Get_Right_Switch() == DR16_Switch_Status_UP)
-            //     {
-            //        gimbal_velocity_y=1;
-
-            //    }
-
-            //    if(DR16.Get_Right_Switch() ==DR16_Switch_Status_MIDDLE)
-            //    {
-            //        gimbal_velocity_y=0;
-            // 					gimbal_velocity_x=0;
-
-            //    }
         }
     }
-    //    }
+
 
     Gimbal.Set_Gimbal_Speed_X(gimbal_velocity_x);
     Gimbal.Set_Gimbal_Speed_Y(gimbal_velocity_y);
@@ -405,6 +384,7 @@ void Class_Chariot::Control_Gimbal()
     {
         if (Get_DR16_Control_Type() == DR16_Control_Type_KEYBOARD)
         {
+            
             // if ((DR16.Get_Right_Switch() == DR16_Switch_Status_DOWN))
             // {
             if (DR16.Get_Mouse_Right_Key() == DR16_Key_Status_PRESSED)
