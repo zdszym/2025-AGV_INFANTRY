@@ -67,8 +67,8 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
 
 #elif defined(GIMBAL)
 
-    Chassis.Set_Velocity_X_Max(10.0f);
-    Chassis.Set_Velocity_Y_Max(10.0f);
+zz    Chassis.Set_Velocity_X_Max(3.5f);
+    Chassis.Set_Velocity_Y_Max(3.5f);
 
     // 遥控器
     DR16.Init(&huart3);
@@ -149,6 +149,8 @@ void Class_Chariot::CAN_Chassis_Control_RxCpltCallback()
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
     {
         target_omega = 0;
+		chassis_velocity_x=0;
+		chassis_velocity_y=0;
     }
     else
     {
@@ -174,16 +176,20 @@ void Class_Chariot::CAN_Gimbal_RxCpltCallback(uint8_t *data)
     Enum_Referee_Game_Status_Stage game_stage;
     uint16_t Booster_17mm_1_Heat;
     uint16_t Shooter_Barrel_Heat_Limit;
+    uint16_t tmp_shooter_speed;
+    float Shooter_Speed;
 
     robo_id = (Enum_Referee_Data_Robots_ID)CAN_Manage_Object->Rx_Buffer.Data[0];
     game_stage = (Enum_Referee_Game_Status_Stage)CAN_Manage_Object->Rx_Buffer.Data[1];
     memcpy(&Shooter_Barrel_Heat_Limit, CAN_Manage_Object->Rx_Buffer.Data + 2, sizeof(uint16_t));
     memcpy(&Booster_17mm_1_Heat, CAN_Manage_Object->Rx_Buffer.Data + 4, sizeof(uint16_t));
-
+    memcpy(&tmp_shooter_speed,CAN_Manage_Object->Rx_Buffer.Data + 6,sizeof(uint16_t));
+    Shooter_Speed=tmp_shooter_speed/10.0f;
     Referee.Robot_Status.Robot_ID= robo_id;
     Referee.Game_Status.Stage_Enum = game_stage;
     Referee.Robot_Status.Booster_17mm_1_Heat_Max = Shooter_Barrel_Heat_Limit;
     Referee.Robot_Power_Heat.Booster_17mm_1_Heat = Booster_17mm_1_Heat;
+    Referee.Robot_Booster.Speed=Shooter_Speed;
 }
 
 

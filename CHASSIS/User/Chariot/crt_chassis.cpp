@@ -239,7 +239,7 @@ void Class_Tricycle_Chassis::Speed_Resolution()
 
 Enum_Supercap_Mode test_mode = Supercap_Mode_ENABLE;
 float test_power = 58.0f;
-float compensate_max_power = 30.0f;
+float compensate_max_power = 5.0f;
 /**
  * @brief TIM定时器中断计算回调函数
  *
@@ -275,23 +275,27 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     Supercap.Set_Limit_Power(500);
     Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
 #else
-    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max() - 10);
+    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max());
     Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
-    __Sprint_Status=Sprint_Status_ENABLE;
+    //__Sprint_Status=Sprint_Status_ENABLE;
     if (__Sprint_Status == Sprint_Status_ENABLE)
     {
         Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + Supercap.Get_Buffer_Power());
     }
     else
     {
-        if (Supercap.Get_Buffer_Power() >= compensate_max_power)
-        {
-            Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + compensate_max_power);
-        }
-        else
+//        if (Supercap.Get_Buffer_Power() >= compensate_max_power)
+//        {
+//            Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max() + compensate_max_power);
+//        }
+//        else
         {
             Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
         }
+        // if(Supercap.Get_Buffer_Power() == 0)
+        // {
+        //     Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max()+fabs(Power_Limit.PID_Energy_Control.Get_Out())+5);
+        // }
     }
 
 #endif

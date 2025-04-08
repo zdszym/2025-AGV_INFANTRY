@@ -297,9 +297,15 @@ float Class_MiniPC::calc_pitch(float x, float y, float z)
     // 使用重力加速度模型迭代更新俯仰角
     for (size_t i = 0; i < 20; i++)
     {
-        float v_x = bullet_v * cosf(pitch);
-        float v_y = bullet_v * sinf(pitch);
-
+        float v_x,v_y;
+        if(Referee->Referee_Status==Referee_Status_ENABLE&&Referee->Robot_Booster.Speed>15.0f){
+         v_x = Referee->Robot_Booster.Speed * cosf(pitch);
+         v_y = Referee->Robot_Booster.Speed * sinf(pitch);
+        }
+else{
+    v_x = bullet_v * cosf(pitch);
+    v_y = bullet_v * sinf(pitch);
+}
         float t = sqrtf(x * x + y * y) / v_x;
         float h = v_y * t - 0.5 * g * t * t;
         float dz = z - h;
