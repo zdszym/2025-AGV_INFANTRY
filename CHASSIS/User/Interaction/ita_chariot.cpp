@@ -97,7 +97,8 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     // 目标角速度
     float chassis_omega = 0;
     // 底盘控制类型
-
+    //目标速度，用于遥控器控制
+    float Chassis_Velocity_X = 0, Chassis_Velocity_Y = 0;
     // 底盘和云台夹角（弧度制）
     float derta_angle;
     // // uint16_t  tmp_omega, tmp_gimbal_pitch;
@@ -156,9 +157,14 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
     {
         chassis_omega = 0;
+        Chassis_Velocity_X=0;
+        Chassis_Velocity_Y=0;
+        Chassis.Set_Target_Velocity_X(Chassis_Velocity_X);
+        Chassis.Set_Target_Velocity_Y(Chassis_Velocity_Y);
     }
 
     Chassis.Set_Target_Omega(chassis_omega);
+    
 }
 #endif
 
