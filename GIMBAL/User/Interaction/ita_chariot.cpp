@@ -67,7 +67,7 @@ void Class_Chariot::Init(float __DR16_Dead_Zone)
 
 #elif defined(GIMBAL)
 
-zz    Chassis.Set_Velocity_X_Max(3.5f);
+    Chassis.Set_Velocity_X_Max(3.5f);
     Chassis.Set_Velocity_Y_Max(3.5f);
 
     // 遥控器
@@ -448,14 +448,14 @@ void Class_Chariot::Control_Gimbal()
                         tmp_gimbal_pitch = MiniPC.Get_Rx_Pitch_Angle();
                         // 键盘遥控器操作逻辑
                         tmp_gimbal_yaw -= DR16.Get_Mouse_X() * DR16_Mouse_Yaw_Angle_Resolution * 50;
-                        tmp_gimbal_pitch -= DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution * 50;
+                        tmp_gimbal_pitch += DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution * 50;
                     }
                 }
                 if (Gimbal.Get_Gimbal_Control_Type() == Gimbal_Control_Type_NORMAL || MiniPC.Get_MiniPC_Status() == MiniPC_Data_Status_DISABLE)
                 {
                     // 键盘遥控器操作逻辑
                     tmp_gimbal_yaw -= DR16.Get_Mouse_X() * DR16_Mouse_Yaw_Angle_Resolution;
-                    tmp_gimbal_pitch -= DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution;
+                    tmp_gimbal_pitch += DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution;
                 }
             }
         }
