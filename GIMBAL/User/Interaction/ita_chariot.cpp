@@ -220,7 +220,10 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
     chassis_angle = Gimbal.Motor_Yaw.Get_Now_Angle();
     relative_angle = gimbal_angle - chassis_angle;
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
-        relative_angle += 0;
+		{
+//       relative_angle += 0;
+		relative_angle += 0.005*PI * 2 * 0.6;//0.003可以使功率上限为80的底盘正常运动
+		}
     testtt = relative_angle / PI * 180;
     // 测试，假设没有相对角度
     // relative_angle = 0;
