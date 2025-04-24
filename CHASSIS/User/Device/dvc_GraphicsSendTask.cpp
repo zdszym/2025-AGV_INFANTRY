@@ -501,6 +501,9 @@ void CharChange(uint8_t Init_Flag)
 	uint8_t FrictionSingle[] = "Single";
 	uint8_t FrictionMulti[] = "Multi";
 
+	uint8_t AutoLost[] = "LOST";
+	uint8_t AutoOn[] = "ON";
+	
 	uint8_t SupercapOff[] = "OFF";
 	uint8_t SupercapOn[] = "ON";
 	uint8_t SupercapListen[] = "LISTEN";
@@ -661,6 +664,25 @@ void CharChange(uint8_t Init_Flag)
 	// 	}
 	// }
 
+	/*自瞄连接状态*/
+	static uint8_t AutoChangeName[] = "auto";
+	if (Init_Flag)
+	{
+		Char_Draw(0, Op_Add, 0.9 * SCREEN_LENGTH, 0.45 * SCREEN_WIDTH, 20, sizeof(INIT), 2, Pink, AutoChangeName, INIT);
+	}
+	else
+	{
+		switch (JudgeReceiveData.Minipc_Satus)
+		{
+		case 1:
+			Char_Draw(0, Op_Change, 0.9 * SCREEN_LENGTH, 0.45 * SCREEN_WIDTH, 20, sizeof(AutoOn), 2, Green, AutoChangeName, AutoOn);
+			break;
+		case 0:
+			Char_Draw(0, Op_Change, 0.9 * SCREEN_LENGTH, 0.45 * SCREEN_WIDTH, 20, sizeof(AutoLost), 2, Pink, AutoChangeName, AutoLost);
+			break;
+		}
+	}		
+
 	/*切换底盘运动模式*/
 	static uint8_t ChassisChangeName[] = "fcn";
 	if (Init_Flag)
@@ -725,6 +747,30 @@ void Char_Init(void)
 	Char_Draw(0, Op_Add, 0.40 * SCREEN_LENGTH, 0.07 * SCREEN_WIDTH, 30, sizeof(cap_char), 2, Yellow, CapStaticName, cap_char);
 }
 
+
+void MiniPC_Aim_Change(uint8_t Init_Cnt)
+{
+	/*自瞄获取状态*/
+	static uint8_t Auto_Aim_ChangeName[] = "Aim";
+	static uint8_t optype;
+	graphic_data_struct_t* P_graphic_data;
+
+	optype = (Init_Cnt == 0) ? Op_Change : Op_Add;
+
+	switch (JudgeReceiveData.MiniPC_Aim_Status)
+	{
+		case 1:
+			P_graphic_data = Rectangle_Draw(0, optype, 0.3495 * SCREEN_LENGTH, 0.3 * SCREEN_WIDTH, 0.651 * SCREEN_LENGTH, 0.8 * SCREEN_WIDTH, 2, Green, Auto_Aim_ChangeName);
+			memcpy(data_pack, (uint8_t *)P_graphic_data, DRAWING_PACK);
+		break;
+		case 0:
+			P_graphic_data = Rectangle_Draw(0, optype, 0.3495 * SCREEN_LENGTH, 0.3 * SCREEN_WIDTH, 0.651 * SCREEN_LENGTH, 0.8 * SCREEN_WIDTH, 2, Pink, Auto_Aim_ChangeName);
+			memcpy(data_pack, (uint8_t *)P_graphic_data, DRAWING_PACK);
+		break;
+	}	
+	Send_UIPack(Drawing_Graphic1_ID, JudgeReceiveData.robot_id, JudgeReceiveData.robot_id + 0x100, data_pack, DRAWING_PACK); 		
+
+}
 /**********************************************************************************************************
  *函 数 名: PitchUI_Change
  *功能说明: Pitch角度绘制
@@ -790,6 +836,6 @@ void GraphicSendtask(void)
 	delta_time = DWT_GetTimeline_us() - start_time;
 	// PitchUI_Change(JudgeReceiveData.Pitch_Angle, Init_Cnt);
 	CapDraw(JudgeReceiveData.Supercap_Voltage, Init_Cnt);
-	// MiniPC_Aim_Change(Init_Cnt);
+	 MiniPC_Aim_Change(Init_Cnt);
 	CapUI_Change(JudgeReceiveData.Supercap_Voltage, Init_Cnt);
 }
