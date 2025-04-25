@@ -1,24 +1,24 @@
-T414C 002:264.212   SEGGER J-Link V7.98c Log File
-T414C 002:264.391   DLL Compiled: Aug  7 2024 15:37:06
-T414C 002:264.419   Logging started @ 2025-04-24 12:16
-T414C 002:264.444   Process: E:\Keil5\new_comprehensive_keil5\32\UV4\UV4.exe
-T414C 002:264.469 - 2264.465ms
-T414C 002:264.500 JLINK_SetWarnOutHandler(...)
-T414C 002:264.522 - 0.024ms
-T414C 002:264.550 JLINK_OpenEx(...)
-T414C 002:267.470   
+T6B6C 003:462.337   SEGGER J-Link V7.98c Log File
+T6B6C 003:462.494   DLL Compiled: Aug  7 2024 15:37:06
+T6B6C 003:462.521   Logging started @ 2025-04-25 11:32
+T6B6C 003:462.546   Process: E:\Keil5\new_comprehensive_keil5\32\UV4\UV4.exe
+T6B6C 003:462.576 - 3462.572ms
+T6B6C 003:463.160 JLINK_SetWarnOutHandler(...)
+T6B6C 003:463.188 - 0.030ms
+T6B6C 003:463.356 JLINK_OpenEx(...)
+T6B6C 003:465.196   
   ***** Error: 
-T414C 002:267.524   Cannot connect to J-Link.
-T414C 002:268.207 - 3.655ms returns "Cannot connect to J-Link."
-T414C 002:268.400 
+T6B6C 003:465.246   Cannot connect to J-Link.
+T6B6C 003:465.436 - 2.080ms returns "Cannot connect to J-Link."
+T6B6C 003:465.611 
   ***** Warning: 
-T414C 002:268.436 API Error: API JLINK_GetHardwareVersion function called before JLINKARM_Open()
-T414C 002:268.474 JLINK_GetHardwareVersion()
-T414C 002:270.211   
+T6B6C 003:465.653 API Error: API JLINK_GetHardwareVersion function called before JLINKARM_Open()
+T6B6C 003:465.689 JLINK_GetHardwareVersion()
+T6B6C 003:467.117   
   ***** Error: 
-T414C 002:270.250   Cannot connect to J-Link.
-T414C 002:270.396 - 1.922ms
-T414C 004:800.537 JLINK_Close()
-T414C 004:800.645 - 0.107ms
-T414C 004:800.669   
-T414C 004:800.693   Closed
+T6B6C 003:467.159   Cannot connect to J-Link.
+T6B6C 003:467.318 - 1.628ms
+T6B6C 007:998.230 JLINK_Close()
+T6B6C 007:998.379 - 0.148ms
+T6B6C 007:998.409   
+T6B6C 007:998.438   Closed

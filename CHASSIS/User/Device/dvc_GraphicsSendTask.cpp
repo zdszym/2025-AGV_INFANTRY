@@ -358,6 +358,9 @@ void ShootLines_Init(void)
 	P_graphic_data = Line_Draw(1, Op_Add, SCREEN_LENGTH * 0.5 - 30 + x_bias, SCREEN_WIDTH * 0.5 - 92 + y_bias, SCREEN_LENGTH * 0.5 + 30 + x_bias, SCREEN_WIDTH * 0.5 - 92 + y_bias, 1, Green, ShootLineName1);
 	memcpy(&data_pack[DRAWING_PACK * 2], (uint8_t *)P_graphic_data, DRAWING_PACK);
 
+	P_graphic_data=Circle_Draw(1,Op_Add,SCREEN_LENGTH * 0.5  + x_bias, SCREEN_WIDTH * 0.5 - 92 + y_bias,9,4,Red_Blue,ShootLineName7);
+  memcpy(&data_pack[DRAWING_PACK*4],(uint8_t *)P_graphic_data,DRAWING_PACK);//发射UI中间加一个圆圈辅助瞄准
+	
 	P_graphic_data = Line_Draw(1, Op_Add, SCREEN_LENGTH * 0.5 - 20 + x_bias, SCREEN_WIDTH * 0.5 - 112 + y_bias, SCREEN_LENGTH * 0.5 + 20 + x_bias, SCREEN_WIDTH * 0.5 - 112 + y_bias, 1, Green, ShootLineName4);
 	memcpy(&data_pack[DRAWING_PACK * 3], (uint8_t *)P_graphic_data, DRAWING_PACK);
 
