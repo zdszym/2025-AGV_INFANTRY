@@ -220,11 +220,10 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
     CAN2_0x152_Tx_Data[1] = MiniPC.Get_Vision_Mode();
     CAN2_0x152_Tx_Data[2] = Chassis.Sprint_Status;
     CAN2_0x152_Tx_Data[3] = Booster.Get_Booster_User_Control_Type(); // 摩擦轮状态
-    CAN2_0x152_Tx_Data[4] = Gimbal.Get_Gimbal_Control_Type();   // 云台状态
+    CAN2_0x152_Tx_Data[4] = Gimbal.Get_Gimbal_Control_Type();        // 云台状态
     CAN2_0x152_Tx_Data[5] = MiniPC.Get_MiniPC_Status();
     CAN2_0x152_Tx_Data[6] = Booster.Get_Booster_Jamming_Type();
     CAN2_0x152_Tx_Data[7] = Chassis.Get_Chassis_UI_Init_flag();
-
 }
 
 #endif
@@ -358,7 +357,7 @@ void Class_Chariot::Control_Gimbal()
         /*键盘控制*/
         if (Get_DR16_Control_Type() == DR16_Control_Type_KEYBOARD)
         {
-            //切换自瞄手瞄
+            // 切换自瞄手瞄
             if (DR16.Get_Mouse_Right_Key() == DR16_Key_Status_PRESSED)
             {
                 if (DR16.Get_Keyboard_Key_V() == DR16_Key_Status_PRESSED)
@@ -386,7 +385,7 @@ void Class_Chariot::Control_Gimbal()
                 tmp_gimbal_yaw -= DR16.Get_Mouse_X() * DR16_Mouse_Yaw_Angle_Resolution;
                 tmp_gimbal_pitch += DR16.Get_Mouse_Y() * DR16_Mouse_Pitch_Angle_Resolution;
             }
-            //一键掉头
+            // 一键掉头
             if (DR16.Get_Keyboard_Key_C() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
                 tmp_gimbal_yaw += 180.0f;
@@ -466,24 +465,24 @@ void Class_Chariot::Control_Booster()
                 else
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
             }
-						if(DR16.Get_Keyboard_Key_Ctrl()==DR16_Key_Status_TRIG_FREE_PRESSED)//2025.4.26，解决UI无法切换single和multi问题
-						{
-							if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_DISABLE)
-								Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
-							else
-								Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_DISABLE);
-						}
+            if (DR16.Get_Keyboard_Key_Ctrl() == DR16_Key_Status_TRIG_FREE_PRESSED) // 2025.4.26，解决UI无法切换single和multi问题
+            {
+                if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_DISABLE)
+                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
+                else
+                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_DISABLE);
+            }
             // 切换连发模式
-//						if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_MULTI)
-//						{
-//							if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
-//							{
-//                if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
-//                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
-//                else
-//                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_SINGLE);
-//							}							
-//						}
+            //						if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_MULTI)
+            //						{
+            //							if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
+            //							{
+            //                if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
+            //                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
+            //                else
+            //                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_SINGLE);
+            //							}
+            //						}
             if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
