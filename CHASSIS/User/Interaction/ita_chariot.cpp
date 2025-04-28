@@ -91,7 +91,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback(uint8_t *data)
     Chassis.Set_Target_Velocity_X(float(Chassis_Velocity_X));
     Chassis.Set_Target_Velocity_Y(float(Chassis_Velocity_Y));
 }
-Enum_Chassis_Control_Type chassis_control_type;
+
 void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
 {
     // 目标角速度
@@ -101,36 +101,37 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     float Chassis_Velocity_X = 0, Chassis_Velocity_Y = 0;
     // 底盘和云台夹角（弧度制）
     float derta_angle;
-    // // uint16_t  tmp_omega, tmp_gimbal_pitch;
-    // // memcpy(&tmp_gimbal_pitch,&CAN_Manage_Object->Rx_Buffer.Data[5],sizeof(uint16_t));
-    // memcpy(&control_type, &CAN_Manage_Object->Rx_Buffer.Data[0], sizeof(uint8_t));
-    // // Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch,0,0x7FFF,-10.0f,30.0f);
-
-    // chassis_control_type = (Enum_Chassis_Control_Type)(control_type & 0x03);
-    // Sprint_Status = (Enum_Sprint_Status)(control_type >> 2 & 0x01);
-    // //    Bulletcap_Status = (Enum_Bulletcap_Status)(control_type>>3 & 0x01);
-    // //    Fric_Status = (Enum_Fric_Status)(control_type>>4 & 0x01);
-    // //    MiniPC_Aim_Status = (Enum_MinPC_Aim_Status)(control_type>>5 & 0x01);
-    // //    MiniPC_Status = (Enum_MiniPC_Status)(control_type>>6 & 0x01);
-    // //    Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)(control_type>>7 & 0x01);
-    // chassis_control_type = (Enum_Chassis_Control_Type)CAN_Manage_Object->Rx_Buffer.Data[0];
 
     Chassis_Angle = Motor_Yaw.Get_Now_Radian();
     derta_angle = Chassis_Angle - Reference_Angle + Offset_Angle;
 
+    uint16_t flags;
+    uint16_t tmp_gimbal_pitch;
+    uint16_t tmp_fric_omega_left;
+    uint16_t tmp_fric_omega_right;
 
+    memcpy(&flags, data, sizeof(flags));
+    memcpy(&tmp_gimbal_pitch, data + 2, sizeof(tmp_gimbal_pitch));
+    memcpy(&tmp_fric_omega_left, data + 4, sizeof(tmp_fric_omega_left));
+    memcpy(&tmp_fric_omega_right, data + 6, sizeof(tmp_fric_omega_right));
 
-    // // 设定底盘控制类型
-    // Chassis.Set_Chassis_Control_Type((Enum_Chassis_Control_Type)CAN_Manage_Object->Rx_Buffer.Data[0]);
-    // Sprint_Status = (Enum_Sprint_Status)CAN_Manage_Object->Rx_Buffer.Data[2];
-    // UI_Fric_Flag = (FRIC_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[3];
-    // UI_Gimbal_Flag = (GIMBAL_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[4];
-    // JudgeReceiveData.Minipc_Status = CAN_Manage_Object->Rx_Buffer.Data[5];
-    // Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)CAN_Manage_Object->Rx_Buffer.Data[7];
+    Chassis_Control_Type = Enum_Chassis_Control_Type(flags & 0x3);
+    Chassis.Set_Chassis_Control_Type(Chassis_Control_Type);
+
+    MiniPC_Type = Enum_MiniPC_Type((flags >> 2) & 0x1);
+    Sprint_Status = Enum_Sprint_Status((flags >> 3) & 0x1);
+    UI_Fric_Flag = Enum_Booster_User_Control_Type((flags >> 4) & 0x1);
+    UI_Gimbal_Flag = GIMBAL_FLAG_E((flags >> 5) & 0x3);
+    MiniPC_Status = Enum_MiniPC_Status((flags >> 7) & 0x1);
+    Referee_UI_Refresh_Status = Enum_Referee_UI_Refresh_Status((flags >> 8) & 0x1);
+
+    Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch, 0, 0x7fff, -30.0f, 30.0f);
+    Fric_Omega_Left = tmp_fric_omega_left;
+    Fric_Omega_Right = tmp_fric_omega_right;
+
     // 底盘控制方案
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
-        // chassis_omega = Math_Int_To_Float(tmp_omega,0,0xFF,-1 * Chassis.Get_Omega_Max(),Chassis.Get_Omega_Max());
         if (Chassis.Get_Target_Velocity_X() == 0 && Chassis.Get_Target_Velocity_Y() == 0)
             chassis_omega = PI * 2 * 2;
         else

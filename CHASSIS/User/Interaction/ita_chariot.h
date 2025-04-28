@@ -107,12 +107,7 @@ typedef enum
     FOLLOW_OFF = 0x00,
 } FOLLOW_FLAG_E;
 
-typedef enum
-{
-    Booster_User_Control_Type_DISABLE = 0,
-    Booster_User_Control_Type_SINGLE = 1,
-    Booster_User_Control_Type_MULTI = 2,
-} FRIC_FLAG_E;
+
 
 typedef enum
 {
@@ -229,18 +224,23 @@ public:
     Enum_MiniPC_Status MiniPC_Status = MiniPC_Status_DISABLE;
     // 裁判系统UI刷新状态
     Enum_Referee_UI_Refresh_Status Referee_UI_Refresh_Status = Referee_UI_Refresh_Status_DISABLE;
+
+    Enum_MiniPC_Type MiniPC_Type = MiniPC_Type_Nomal;
+    Enum_Chassis_Control_Type Chassis_Control_Type = Chassis_Control_Type_DISABLE;
     // 底盘云台通讯数据
 
     /*ui变量 */
     GIMBAL_FLAG_E UI_Gimbal_Flag = UI_Gimbal_Control_Type_DISABLE;
-    FRIC_FLAG_E UI_Fric_Flag = Booster_User_Control_Type_DISABLE;
+    Enum_Booster_User_Control_Type UI_Fric_Flag = Booster_User_Control_Type_SINGLE;
     Enum_SUPERCAP_FLAG_E Supercap_Flag = SUPERCAP_OFF;
     float Gimbal_Tx_Pitch_Angle = 0;
+    float Fric_Omega_Left=0;
+    float Fric_Omega_Right = 0;
 
 protected:
     // pitch控制状态 锁定和自由控制
     Enum_Pitch_Control_Status Pitch_Control_Status = Pitch_Status_Control_Free;
-   
+
     // 初始化相关常量
 
     // 绑定的CAN

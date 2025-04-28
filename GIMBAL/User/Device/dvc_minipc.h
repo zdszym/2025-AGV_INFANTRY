@@ -97,7 +97,7 @@ enum Enum_MiniPC_Status
  */
 enum Enum_Vision_Mode
 {
-    ARMOR_MODE = 4,
+    ARMOR_MODE = 0,
     WINDMILL_MODE,
 };
 

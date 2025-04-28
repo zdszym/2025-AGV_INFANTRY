@@ -70,7 +70,7 @@ enum Enum_Windmill_Type :uint8_t
  */
 enum Enum_MiniPC_Type : uint8_t
 {
-    MiniPC_Type_Nomal = 4,    //装甲板
+    MiniPC_Type_Nomal = 0,    //装甲板
     MiniPC_Type_Windmill,       //风车
 };
 

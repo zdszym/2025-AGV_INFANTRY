@@ -31,9 +31,14 @@ class Class_Booster;
 
 enum Enum_Booster_User_Control_Type
 {
-		Booster_User_Control_Type_DISABLE=0,
-    Booster_User_Control_Type_SINGLE ,
+    Booster_User_Control_Type_SINGLE = 0,
     Booster_User_Control_Type_MULTI,
+};
+
+enum Enum_Friction_Control_Type
+{
+    Friction_Control_Type_DISABLE = 0,
+    Friction_Control_Type_ENABLE,
 };
 
 /**
@@ -118,14 +123,15 @@ public:
     inline Enum_Booster_Control_Type Get_Booster_Control_Type();
     inline Enum_Booster_User_Control_Type Get_Booster_User_Control_Type();
     inline Enum_Booster_Jamming_Type Get_Booster_Jamming_Type();
-
+    inline Enum_Friction_Control_Type Get_Friction_Control_Type();
     inline void Set_Booster_Control_Type(Enum_Booster_Control_Type __Booster_Control_Type);
     inline void Set_Booster_User_Control_Type(Enum_Booster_User_Control_Type __Booster_User_Control_Type);
     inline void Set_Booster_Jamming_Type(Enum_Booster_Jamming_Type __Booster_Jamming_Type);
     inline void Set_Friction_Omega(float __Friction_Omega);
     inline void Set_Driver_Omega(float __Driver_Omega);
-
+    inline void Set_Friction_Control_Type(Enum_Friction_Control_Type __Friction_Control_Type);
     void TIM_Calculate_PeriodElapsedCallback();
+    Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_SINGLE;
 
 protected:
     // 初始化相关常量
@@ -150,8 +156,9 @@ protected:
 
     // 发射机构状态
     Enum_Booster_Control_Type Booster_Control_Type = Booster_Control_Type_DISABLE;
-    Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_DISABLE;
+  
     Enum_Booster_Jamming_Type Booster_Jamming_Type = Booster_Not_Jamming;
+    Enum_Friction_Control_Type Friction_Control_Type = Friction_Control_Type_DISABLE;
     // 摩擦轮角速度
     float Friction_Omega = 670.0f;
     // 拨弹盘实际的目标速度, 一圈八发子弹
@@ -192,6 +199,25 @@ Enum_Booster_Control_Type Class_Booster::Get_Booster_Control_Type()
 Enum_Booster_User_Control_Type Class_Booster::Get_Booster_User_Control_Type()
 {
     return (Booster_User_Control_Type);
+}
+
+/**
+ * @brief 获得发射机构状态
+ *
+ * @return Enum_Booster_Control_Type 发射机构状态
+ */
+Enum_Friction_Control_Type Class_Booster::Get_Friction_Control_Type()
+{
+    return (Friction_Control_Type);
+}
+/**
+ * @brief 设定发射机构状态
+ *
+ * @param __Booster_Control_Type 发射机构状态
+ */
+void Class_Booster::Set_Friction_Control_Type(Enum_Friction_Control_Type __Friction_Control_Type)
+{
+    Friction_Control_Type = __Friction_Control_Type;
 }
 
 /**

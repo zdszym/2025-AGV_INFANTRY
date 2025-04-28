@@ -513,9 +513,13 @@ extern "C" void Task_Loop()
         JudgeReceiveData.Minipc_Status = chariot.MiniPC_Status;         // 自瞄是否离线
         JudgeReceiveData.MiniPC_Aim_Status = chariot.MiniPC_Aim_Status; // 自瞄是否瞄准
         // JudgeReceiveData.Supercap_Energy = chariot.Chassis.Supercap.Get_Stored_Energy();    // 超级电容储能
-        // JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage();     // 超级电容电压
+        JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage();     // 超级电容电压
         JudgeReceiveData.Chassis_Control_Type = chariot.Chassis.Get_Chassis_Control_Type(); // 底盘控制模式
-        if (chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
+        JudgeReceiveData.booster_fric_omega_left = chariot.Fric_Omega_Left;
+        JudgeReceiveData.booster_fric_omega_right = chariot.Fric_Omega_Right;
+        JudgeReceiveData.Gimbal_Control_Type = chariot.UI_Gimbal_Flag;
+        JudgeReceiveData.Booster_User_Control_Type = chariot.UI_Fric_Flag;
+        if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
             Init_Cnt = 10;
 
         // DWT_Delay(0.1);
