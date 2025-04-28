@@ -124,7 +124,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     Sprint_Status = (Enum_Sprint_Status)CAN_Manage_Object->Rx_Buffer.Data[2];
     UI_Fric_Flag = (FRIC_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[3];
     UI_Gimbal_Flag = (GIMBAL_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[4];
-		JudgeReceiveData.Minipc_Satus=CAN_Manage_Object->Rx_Buffer.Data[5];
+    JudgeReceiveData.Minipc_Status = CAN_Manage_Object->Rx_Buffer.Data[5];
     Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)CAN_Manage_Object->Rx_Buffer.Data[7];
     // 底盘控制方案
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)

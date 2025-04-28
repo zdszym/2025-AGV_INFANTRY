@@ -208,39 +208,36 @@ uint8_t CAN_Send_Data(CAN_HandleTypeDef *hcan, uint16_t ID, uint8_t *Data, uint1
     if (hcan->Instance == CAN1)
     {
 
-            CAN_TxHeaderTypeDef tx_header;
-            uint32_t used_mailbox;
+        CAN_TxHeaderTypeDef tx_header;
+        uint32_t used_mailbox;
 
-            // 检测传参是否正确
-            assert_param(hcan != NULL);
+        // 检测传参是否正确
+        assert_param(hcan != NULL);
 
-            tx_header.StdId = ID;
-            tx_header.ExtId = 0;
-            tx_header.IDE = 0;
-            tx_header.RTR = 0;
-            tx_header.DLC = Length;
+        tx_header.StdId = ID;
+        tx_header.ExtId = 0;
+        tx_header.IDE = 0;
+        tx_header.RTR = 0;
+        tx_header.DLC = Length;
 
-
-            return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
-        
+        return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
     }
     if (hcan->Instance == CAN2)
     {
 
-            CAN_TxHeaderTypeDef tx_header;
-            uint32_t used_mailbox;
+        CAN_TxHeaderTypeDef tx_header;
+        uint32_t used_mailbox;
 
-            // 检测传参是否正确
-            assert_param(hcan != NULL);
+        // 检测传参是否正确
+        assert_param(hcan != NULL);
 
-            tx_header.StdId = ID;
-            tx_header.ExtId = 0;
-            tx_header.IDE = 0;
-            tx_header.RTR = 0;
-            tx_header.DLC = Length;
+        tx_header.StdId = ID;
+        tx_header.ExtId = 0;
+        tx_header.IDE = 0;
+        tx_header.RTR = 0;
+        tx_header.DLC = Length;
 
-            return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
-        
+        return (HAL_CAN_AddTxMessage(hcan, &tx_header, Data, &used_mailbox));
     }
     return 1;
 }
@@ -254,8 +251,6 @@ void TIM_CAN_PeriodElapsedCallback()
 #ifdef CHASSIS
     static uint8_t mod5 = 0;
     static uint8_t mod10 = 0;
-
-
 
     mod5++;
     mod10++;
@@ -296,8 +291,6 @@ void TIM_CAN_PeriodElapsedCallback()
         // CAN_Send_Data(&hcan1, 0x01d, CAN1_0x01D_Tx_Data, 8);
     }
 #endif
-
-   
 
 #elif defined(GIMBAL)
 

@@ -4,8 +4,8 @@
 #include "stdint.h"
 #include "crt_chassis.h"
 #include "dvc_referee.h"
-#include "ita_chariot.h"
-#define PI 3.14159265358979323846
+
+#define PI 3.14159265358979323846f
 #define DMA_FLAG_TCIF4 ((uint32_t)0x20000020)
 /*��Ļ����*/
 #define SCREEN_WIDTH 1080
@@ -90,11 +90,10 @@ enum ARMOR_ID
 	ARMOR_ID_4,
 	ARMOR_ID_5,
 	ARMOR_ID_Sentry,
-
 };
 
 // ͼ�����ݽṹ��
-typedef __PACKED_STRUCT 
+typedef __PACKED_STRUCT
 {
 	uint8_t graphic_name[3];
 	uint32_t operate_tpye : 3;
@@ -109,7 +108,8 @@ typedef __PACKED_STRUCT
 	uint32_t radius : 10;
 	uint32_t end_x : 11;
 	uint32_t end_y : 11;
-} graphic_data_struct_t;
+}
+graphic_data_struct_t;
 
 /* ͼ�λ������� */
 typedef enum
@@ -180,6 +180,27 @@ typedef __packed struct
 	ext_client_custom_character_t char_custom; // �Զ����ַ�������   :45B
 } ext_student_interactive_char_header_data_t;
 
+typedef struct
+{
+	uint8_t robot_id;
+	uint8_t Chassis_Control_Type;
+	uint8_t Bullet_Status;
+	uint8_t Minipc_Status;
+	uint8_t MiniPC_Aim_Status;
+	uint8_t Fric_Status;
+	uint8_t Supercap_Energy;
+	uint8_t Supercap_State;
+	uint8_t Radar_Double_Damage_Flag;
+	uint8_t Gimbal_Control_Type; // 添加云台控制状态字段
+	uint8_t Booster_User_Control_Type;
+	uint16_t booster_fric_omega_left;
+	uint16_t booster_fric_omega_right;
+	float Supercap_Voltage;
+	float Pitch_Angle;
+	float Chassis_Gimbal_Diff;
+
+} JudgeReceive_t;
+
 void JudgementDataSend(void);
 void JudgementCustomizeGraphics(int Op_type);
 void referee_data_pack_handle(uint8_t sof, uint16_t cmd_id, uint8_t *p_data, uint16_t len);
@@ -196,7 +217,6 @@ graphic_data_struct_t *Line_Draw(uint8_t layer, int Op_Type, uint16_t startx, ui
 graphic_data_struct_t *Rectangle_Draw(uint8_t layer, int Op_Type, uint16_t startx, uint16_t starty, uint16_t endx, uint16_t endy, uint16_t line_width, int color, uint8_t name[]);
 graphic_data_struct_t *FloatData_Draw(uint8_t layer, int Op_Type, uint16_t startx, uint16_t starty, float data_f, uint8_t size, uint8_t valid_bit, uint16_t line_width, int color, uint8_t name[]);
 graphic_data_struct_t *CharGraphic_Draw(uint8_t layer, int Op_Type, uint16_t startx, uint16_t starty, uint8_t size, uint8_t len, uint16_t line_width, int color, uint8_t name[]);
-graphic_data_struct_t *Circle_Draw(uint8_t layer, int Op_Type, uint16_t startx, uint16_t starty, uint32_t radius, uint16_t line_width, int color, uint8_t name[]);
 
 extern F405_typedef F405;
 
@@ -204,6 +224,9 @@ void Lanelines_Init(void);
 void Char_Init(void);
 void CarPosture_Change(short Yaw_100, uint8_t Init_Cnt);
 void PitchUI_Change(float Pitch, uint8_t Init_Cnt);
+void CharChange(uint8_t Init_Flag);
+
+void Char_Draw(uint8_t layer, int Op_Type, uint16_t startx, uint16_t starty, uint8_t size, uint8_t len, uint16_t line_width, int color, uint8_t name[], uint8_t *str_data);
 
 enum
 {
@@ -219,22 +242,10 @@ enum
 	LastState = 0,
 	NowState
 };
-typedef struct
-{
-	uint8_t robot_id;
-	uint8_t Chassis_Control_Type;
-	uint8_t Bullet_Status;
-	uint8_t Minipc_Satus;
-	uint8_t MiniPC_Aim_Status;
-	uint8_t Fric_Status;
-	uint8_t Supercap_Energy;
-	uint8_t Supercap_Voltage;
-	float Pitch_Angle;
-} JudgeReceive_t;
 
 extern unsigned char JudgeSend[SEND_MAX_SIZE];
 extern JudgeReceive_t JudgeReceiveData;
 extern JudgeReceive_t Last_JudgeReceiveData;
-extern uint8_t Init_Cnt; 
+extern uint8_t Init_Cnt;
 
 #endif
