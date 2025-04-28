@@ -144,13 +144,13 @@ protected:
     // 读变量
 
     // 拨弹盘默认速度, 一圈八发子弹, 此速度下与冷却均衡
-    float Default_Driver_Omega = 12;
+    float Default_Driver_Omega = -2.0f * PI / 8.0f * 20;
 
     // 写变量
 
     // 发射机构状态
     Enum_Booster_Control_Type Booster_Control_Type = Booster_Control_Type_DISABLE;
-    Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_SINGLE;
+    Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_DISABLE;
     Enum_Booster_Jamming_Type Booster_Jamming_Type = Booster_Not_Jamming;
     // 摩擦轮角速度
     float Friction_Omega = 670.0f;

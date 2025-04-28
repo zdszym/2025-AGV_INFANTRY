@@ -464,25 +464,13 @@ void Class_Chariot::Control_Booster()
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
                 else
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
-            }
-            if (DR16.Get_Keyboard_Key_Ctrl() == DR16_Key_Status_TRIG_FREE_PRESSED) // 2025.4.26，解决UI无法切换single和multi问题
-            {
+
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_DISABLE)
                     Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
                 else
                     Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_DISABLE);
             }
-            // 切换连发模式
-            //						if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_MULTI)
-            //						{
-            //							if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
-            //							{
-            //                if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
-            //                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_MULTI);
-            //                else
-            //                    Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_SINGLE);
-            //							}
-            //						}
+          
             if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
@@ -490,34 +478,22 @@ void Class_Chariot::Control_Booster()
                 else
                     Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_SINGLE);
             }
-            if (Booster.Get_Booster_Control_Type() == Booster_Control_Type_CEASEFIRE)
+            // 单发模式
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED )
             {
-                if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED)
-                {
-
-                    if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
-                    if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI)
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-
-                    else
-                    {
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-                    }
-                }
-
-                if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
-                {
-
-                    if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
-                    if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI)
-                        Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
-                }
-                else if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_PRESSED_FREE)
-                {
-                    Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
-                }
+                Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
+            }
+            // 连发
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED )
+            {
+                Booster.Set_Booster_Control_Type(Booster_Control_Type_REPEATED);
+            }
+            else
+            {
+			if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_DISABLE)
+                Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+			else if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_MULTI)
+				 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
             }
         }
         else if (Get_DR16_Control_Type() == DR16_Control_Type_REMOTE)

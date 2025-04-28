@@ -173,7 +173,7 @@ void Class_Booster::Init()
     FSM_Antijamming.Init(4, 0);
 
     // 拨弹盘电机
-    Motor_Driver.PID_Angle.Init(75.0f, 0.0f, 1.0f, 0.0f, Default_Driver_Omega, Default_Driver_Omega);
+    Motor_Driver.PID_Angle.Init(75.0f, 0.0f, 1.0f, 0.0f, abs(Default_Driver_Omega), abs(Default_Driver_Omega));
     Motor_Driver.PID_Omega.Init(2500.0f, 500.0f, 0.0f, 0.0f, Motor_Driver.Get_Output_Max(), Motor_Driver.Get_Output_Max());
     Motor_Driver.Init(&hcan2, DJI_Motor_ID_0x203, DJI_Motor_Control_Method_OMEGA);
 
@@ -240,12 +240,12 @@ void Class_Booster::Output()
         Motor_Friction_Right.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
 
         // 热量控制
-       if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
-       {
+        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
+        {
 
             Drvier_Angle = Now_Angle - 2.0f * PI / 8.0f;
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
-       }
+        }
 
         Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
         Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
@@ -262,12 +262,12 @@ void Class_Booster::Output()
         Motor_Friction_Right.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
 
         // 热量控制
-       if (Referee->Get_Booster_17mm_1_Heat() + 50 < Referee->Get_Booster_17mm_1_Heat_Max())
-       {
+        if (Referee->Get_Booster_17mm_1_Heat() + 50 < Referee->Get_Booster_17mm_1_Heat_Max())
+        {
 
             Drvier_Angle = Now_Angle - 2.0f * PI / 8.0f * 5.0f; // 五连发
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
-       }
+        }
         Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
         Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
 
@@ -277,37 +277,19 @@ void Class_Booster::Output()
     break;
     case (Booster_Control_Type_REPEATED):
     {
-
-        // if (Motor_Driver.Get_Now_Omega()<1)
-        // {
-        //     dt = DWT_GetDeltaT(&time);
-        //     if(dt>1000)
-        //     {
-
-        //     }
-        // }
         // 连发模式
         Motor_Driver.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
         Motor_Friction_Left.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
         Motor_Friction_Right.Set_DJI_Motor_Control_Method(DJI_Motor_Control_Method_OMEGA);
 
-        // 根据冷却计算拨弹盘默认速度, 此速度下与冷却均衡
-        // Default_Driver_Omega = Referee->Get_Booster_17mm_1_Heat_CD() / 10.0f / 8.0f * 2.0f * PI;
-
-        // 热量控制
-//        if (abs(Driver_Omega) <= abs(Default_Driver_Omega))
-//        {
-            Motor_Driver.Set_Target_Omega(Driver_Omega);
-//        }
-//        else
-//        {
-//            float tmp_omega;
-//            // tmp_omega = (Default_Driver_Omega - Driver_Omega) / Referee->Get_Booster_17mm_1_Heat_Max() * (FSM_Heat_Detect.Heat + 30.0f) + Driver_Omega;
-//            Motor_Driver.Set_Target_Omega(tmp_omega);
-//        }
-
-        Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
-        Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
+        if (Referee->Get_Booster_17mm_1_Heat() + 30 < Referee->Get_Booster_17mm_1_Heat_Max())
+        {
+            Motor_Driver.Set_Target_Omega(Default_Driver_Omega);
+        }
+        else
+        {
+            Booster_Control_Type = Booster_Control_Type_CEASEFIRE;
+        }
     }
     break;
     }
