@@ -118,14 +118,15 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     Chassis_Angle = Motor_Yaw.Get_Now_Radian();
     derta_angle = Chassis_Angle - Reference_Angle + Offset_Angle;
 
-    // 设定底盘控制类型
-    Chassis.Set_Chassis_Control_Type((Enum_Chassis_Control_Type)CAN_Manage_Object->Rx_Buffer.Data[0]);
-    // Supercap_Flag = (Enum_SUPERCAP_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[2];
-    Sprint_Status = (Enum_Sprint_Status)CAN_Manage_Object->Rx_Buffer.Data[2];
-    UI_Fric_Flag = (FRIC_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[3];
-    UI_Gimbal_Flag = (GIMBAL_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[4];
-    JudgeReceiveData.Minipc_Status = CAN_Manage_Object->Rx_Buffer.Data[5];
-    Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)CAN_Manage_Object->Rx_Buffer.Data[7];
+
+
+    // // 设定底盘控制类型
+    // Chassis.Set_Chassis_Control_Type((Enum_Chassis_Control_Type)CAN_Manage_Object->Rx_Buffer.Data[0]);
+    // Sprint_Status = (Enum_Sprint_Status)CAN_Manage_Object->Rx_Buffer.Data[2];
+    // UI_Fric_Flag = (FRIC_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[3];
+    // UI_Gimbal_Flag = (GIMBAL_FLAG_E)CAN_Manage_Object->Rx_Buffer.Data[4];
+    // JudgeReceiveData.Minipc_Status = CAN_Manage_Object->Rx_Buffer.Data[5];
+    // Referee_UI_Refresh_Status = (Enum_Referee_UI_Refresh_Status)CAN_Manage_Object->Rx_Buffer.Data[7];
     // 底盘控制方案
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_SPIN)
     {
@@ -135,20 +136,6 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
         else
             chassis_omega = PI * 2;
     }
-    //    else if(Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
-    //    {
-    //        //随动yaw角度优化
-    //        Chassis_Angle = Motor_Yaw.Get_Now_Radian();
-    //        if(Chassis_Angle > PI)
-    //            Chassis_Angle -= 2 * PI;
-    //        else if(Chassis_Angle < -PI)
-    //            Chassis_Angle += 2 * PI;
-    //        //随动环
-    //        PID_Chassis_Fllow.Set_Target(Reference_Angle);
-    //        PID_Chassis_Fllow.Set_Now(Chassis_Angle);
-    //        PID_Chassis_Fllow.TIM_Adjust_PeriodElapsedCallback();
-    //        chassis_omega = -PID_Chassis_Fllow.Get_Out();
-    //    }
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_ANTI_SPIN)
     {
         chassis_omega = -PI * 2 * 0.6;

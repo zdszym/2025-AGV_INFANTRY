@@ -216,14 +216,39 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
     memcpy(CAN2_0x150_Tx_Data, &tmp_chassis_velocity_x, sizeof(float));
     memcpy(CAN2_0x150_Tx_Data + 4, &tmp_chassis_velocity_y, sizeof(float));
 
-    CAN2_0x152_Tx_Data[0] = Chassis.Get_Chassis_Control_Type();
-    CAN2_0x152_Tx_Data[1] = MiniPC.Get_Vision_Mode();
-    CAN2_0x152_Tx_Data[2] = Chassis.Sprint_Status;
-    CAN2_0x152_Tx_Data[3] = Booster.Get_Booster_User_Control_Type(); // 摩擦轮状态
-    CAN2_0x152_Tx_Data[4] = Gimbal.Get_Gimbal_Control_Type();        // 云台状态
-    CAN2_0x152_Tx_Data[5] = MiniPC.Get_MiniPC_Status();
-    CAN2_0x152_Tx_Data[6] = Booster.Get_Booster_Jamming_Type();
-    CAN2_0x152_Tx_Data[7] = Chassis.Get_Chassis_UI_Init_flag();
+    /*
+    需要传
+    Enum_Chassis_Control_Type 2bit
+    Enum_Vision_Mode 1bit
+    Enum_Sprint_Status 1bit
+    Enum_Booster_User_Control_Type 1bit
+    Enum_Gimbal_Control_Type 2bit
+    Enum_MiniPC_Status 1bit
+    Enum_UI_INIT_FLAG_E 1bit
+    tmp_gimbal_pitch 2byte
+    */
+    uint16_t flags;
+    uint16_t tmp_gimbal_pitch;
+    uint16_t tmp_fric_omega_left ;
+    uint16_t tmp_fric_omega_right;
+    flags = Chassis.Get_Chassis_Control_Type() | MiniPC.Get_Vision_Mode() << 2 | Chassis.Sprint_Status << 3 | Booster.Get_Booster_User_Control_Type() << 4 | Gimbal.Get_Gimbal_Control_Type << 5 | MiniPC.Get_MiniPC_Status() << 7 | Chassis.Get_Chassis_UI_Init_flag() << 8;
+
+    tmp_gimbal_pitch = Math_Float_To_Int(Gimbal.Motor_Pitch.Get_True_Angle_Pitch(), -30.0f, 30.0f, 0, 0x7FFF);
+    tmp_fric_omega_left = (uint16_t)abs(Booster.Motor_Friction_Left.Get_Now_Omega());
+    tmp_fric_omega_right = (uint16_t)abs(Booster.Motor_Friction_Right.Get_Now_Omega());
+
+    memcpy(CAN2_0x152_Tx_Data, &flags, sizeof(flags));
+    memcpy(CAN2_0x152_Tx_Data + 2, &tmp_fric_omega_left, sizeof(tmp_fric_omega_left));
+    memcpy(CAN2_0x152_Tx_Data + 4, &tmp_fric_omega_right, sizeof(tmp_fric_omega_right));
+
+    // CAN2_0x152_Tx_Data[0] = Chassis.Get_Chassis_Control_Type();
+    // CAN2_0x152_Tx_Data[1] = MiniPC.Get_Vision_Mode();
+    // CAN2_0x152_Tx_Data[2] = Chassis.Sprint_Status;
+    // CAN2_0x152_Tx_Data[3] = Booster.Get_Booster_User_Control_Type(); // 摩擦轮状态
+    // CAN2_0x152_Tx_Data[4] = Gimbal.Get_Gimbal_Control_Type();        // 云台状态
+    // CAN2_0x152_Tx_Data[5] = MiniPC.Get_MiniPC_Status();
+    // CAN2_0x152_Tx_Data[6] = Booster.Get_Booster_Jamming_Type();
+    // CAN2_0x152_Tx_Data[7] = Chassis.Get_Chassis_UI_Init_flag();
 }
 
 #endif
@@ -470,7 +495,7 @@ void Class_Chariot::Control_Booster()
                 else
                     Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_DISABLE);
             }
-          
+
             if (DR16.Get_Keyboard_Key_B() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
                 if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE)
@@ -479,21 +504,21 @@ void Class_Chariot::Control_Booster()
                     Booster.Set_Booster_User_Control_Type(Booster_User_Control_Type_SINGLE);
             }
             // 单发模式
-            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED )
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
             }
             // 连发
-            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED )
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
             {
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_REPEATED);
             }
             else
             {
-			if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_DISABLE)
-                Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
-			else if(Booster.Get_Booster_User_Control_Type()==Booster_User_Control_Type_MULTI)
-				 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+                if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_DISABLE)
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+                else if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI)
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
             }
         }
         else if (Get_DR16_Control_Type() == DR16_Control_Type_REMOTE)

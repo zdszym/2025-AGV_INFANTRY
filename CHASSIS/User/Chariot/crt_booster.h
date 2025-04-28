@@ -52,6 +52,12 @@ enum Enum_Friction_Control_Type
     Friction_Control_Type_ENABLE,
 };
 
+enum Enum_Booster_User_Control_Type
+{
+    Booster_User_Control_Type_SINGLE,
+    Booster_User_Control_Type_MULTI,
+};
+
 /**
  * @brief Specialized, 热量检测有限自动机
  *
@@ -120,6 +126,7 @@ public:
 
     void TIM_Calculate_PeriodElapsedCallback();
     void Output();
+    Enum_Booster_User_Control_Type Booster_User_Control_Type = Booster_User_Control_Type_SINGLE;
 
 protected:
     // 初始化相关常量
