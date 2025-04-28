@@ -228,8 +228,7 @@ void Class_Booster::Output()
         {
             Motor_Driver.Set_Target_Omega(0.0f);
         }
-        Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
-        Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
+
     }
     break;
     case (Booster_Control_Type_SINGLE):
@@ -247,8 +246,7 @@ void Class_Booster::Output()
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
         }
 
-        Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
-        Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
+
 
         // 点一发立刻停火
         Booster_Control_Type = Booster_Control_Type_CEASEFIRE;
@@ -268,8 +266,6 @@ void Class_Booster::Output()
             Drvier_Angle = Now_Angle - 2.0f * PI / 8.0f * 5.0f; // 五连发
             Motor_Driver.Set_Target_Angle(Drvier_Angle);
         }
-        Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
-        Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
 
         // 点一发立刻停火
         Booster_Control_Type = Booster_Control_Type_CEASEFIRE;
@@ -292,6 +288,19 @@ void Class_Booster::Output()
         }
     }
     break;
+    }
+
+    // 控制摩擦轮
+    if (Friction_Control_Type != Friction_Control_Type_DISABLE)
+    {
+
+        Motor_Friction_Left.Set_Target_Omega(Friction_Omega);
+        Motor_Friction_Right.Set_Target_Omega(-Friction_Omega);
+    }
+    else
+    {
+        Motor_Friction_Left.Set_Target_Omega(0.0f);
+        Motor_Friction_Right.Set_Target_Omega(0.0f);
     }
 }
 

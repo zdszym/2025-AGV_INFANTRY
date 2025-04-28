@@ -109,7 +109,7 @@ void Send_toReferee(uint16_t cmd_id, uint16_t data_len)
 	{
 		send_cnt--;
 		// 将超时时间从5ms增加到50ms，提高通信稳定性
-		HAL_UART_Transmit(&huart6, (uint8_t *)Transmit_Pack, Frame_Length, 50);
+		HAL_UART_Transmit(&huart6, (uint8_t *)Transmit_Pack, Frame_Length, 10);
 		DMAsendflag = 1;
 
 		// 添加短暂延时，避免连续发送导致丢包
@@ -888,7 +888,7 @@ void GraphicSendtask(void)
 	if (Init_Cnt > 0)
 	{
 		CharChange(Init_Cnt);
-		PitchUI_Change(-JudgeReceiveData.Pitch_Angle, Init_Cnt);
+		PitchUI_Change(JudgeReceiveData.Pitch_Angle, Init_Cnt);
 		CapDraw(JudgeReceiveData.Supercap_Voltage, Init_Cnt);
 		MiniPC_Aim_Change(Init_Cnt);
 		FrictSpeed_Draw(JudgeReceiveData.booster_fric_omega_left, JudgeReceiveData.booster_fric_omega_right, Init_Cnt);
@@ -1024,7 +1024,7 @@ void GraphicSendtask(void)
 		case 0: // 更新Pitch角度
 			if (fabs(Last_JudgeReceiveData.Pitch_Angle - JudgeReceiveData.Pitch_Angle) > 0.1f)
 			{
-				PitchUI_Change(-JudgeReceiveData.Pitch_Angle, 0);
+				PitchUI_Change(JudgeReceiveData.Pitch_Angle, 0);
 				Last_JudgeReceiveData.Pitch_Angle = JudgeReceiveData.Pitch_Angle;
 			}
 			break;

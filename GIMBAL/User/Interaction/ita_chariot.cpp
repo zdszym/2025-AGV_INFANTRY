@@ -518,19 +518,23 @@ void Class_Chariot::Control_Booster()
             }
 
             // 单发模式
-            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED)
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED&&Booster.Get_Friction_Control_Type()==Friction_Control_Type_ENABLE)
             {
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
             }
-            // 连发
-            else if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
+			   // 连发
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI &&Booster.Get_Friction_Control_Type()==Friction_Control_Type_ENABLE)
             {
+			if(DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_REPEATED);
-            }
-            else
+			
+			 else
             {
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
             }
+            }
+           
+         
         }
         else if (Get_DR16_Control_Type() == DR16_Control_Type_REMOTE)
         {
