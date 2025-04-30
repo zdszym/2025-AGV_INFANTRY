@@ -359,13 +359,13 @@ void Task100us_TIM4_Callback()
     // 定义一个静态变量Referee_Sand_Cnt，用于计数
     static uint16_t Referee_Sand_Cnt = 0;
     // //暂无云台tim4任务
-    if (Referee_Sand_Cnt % 50 == 1)
-    {
-        start_time = DWT_GetTimeline_us();
-        // Task_Loop();
-        delta_time = DWT_GetTimeline_us() - start_time;
-        Referee_Sand_Cnt = 0;
-    }
+    // if (Referee_Sand_Cnt % 50 == 1)
+    // {
+    //     start_time = DWT_GetTimeline_us();
+    //     // Task_Loop();
+    //     delta_time = DWT_GetTimeline_us() - start_time;
+    //     Referee_Sand_Cnt = 0;
+    // }
     GraphicSendtask();
     Referee_Sand_Cnt++;
 
@@ -507,19 +507,20 @@ extern "C" void Task_Loop()
     {
         JudgeReceiveData.robot_id = chariot.Referee.Get_ID();
         // JudgeReceiveData.robot_id = Referee_Data_Robots_ID_RED_HERO_1;
-        JudgeReceiveData.Pitch_Angle = chariot.Gimbal_Tx_Pitch_Angle;   // pitch角度
+        JudgeReceiveData.Pitch_Angle = -chariot.Gimbal_Tx_Pitch_Angle;   // pitch角度
         JudgeReceiveData.Bullet_Status = chariot.Bulletcap_Status;      // 弹舱
         JudgeReceiveData.Fric_Status = chariot.Fric_Status;             // 摩擦轮
         JudgeReceiveData.Minipc_Status = chariot.MiniPC_Status;         // 自瞄是否离线
         JudgeReceiveData.MiniPC_Aim_Status = chariot.MiniPC_Aim_Status; // 自瞄是否瞄准
         // JudgeReceiveData.Supercap_Energy = chariot.Chassis.Supercap.Get_Stored_Energy();    // 超级电容储能
-        JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage()/100;     // 超级电容电压
-        JudgeReceiveData.Chassis_Control_Type = chariot.Chassis.Get_Chassis_Control_Type(); // 底盘控制模式
+        JudgeReceiveData.Supercap_Voltage = chariot.Chassis.Supercap.Get_Now_Voltage() / 100; // 超级电容电压
+        JudgeReceiveData.Chassis_Control_Type = chariot.Chassis.Get_Chassis_Control_Type();   // 底盘控制模式
         JudgeReceiveData.booster_fric_omega_left = chariot.Fric_Omega_Left;
         JudgeReceiveData.booster_fric_omega_right = chariot.Fric_Omega_Right;
         JudgeReceiveData.Gimbal_Control_Type = chariot.UI_Gimbal_Flag;
         JudgeReceiveData.Booster_User_Control_Type = chariot.UI_Fric_Flag;
-        if(chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
+        JudgeReceiveData.Minipc_Mode = chariot.MiniPC_Type;
+        if (chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
             Init_Cnt = 10;
 
         // DWT_Delay(0.1);

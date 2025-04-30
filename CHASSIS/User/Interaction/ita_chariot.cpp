@@ -124,6 +124,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     UI_Gimbal_Flag = GIMBAL_FLAG_E((flags >> 5) & 0x3);
     MiniPC_Status = Enum_MiniPC_Status((flags >> 7) & 0x1);
     Referee_UI_Refresh_Status = Enum_Referee_UI_Refresh_Status((flags >> 8) & 0x1);
+    
 
     Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch, 0, 0x7fff, -30.0f, 30.0f);
     Fric_Omega_Left = tmp_fric_omega_left;
@@ -592,6 +593,17 @@ float OptimizeAngle(float target_angle, float current_angle)
 void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
 {
 #ifdef CHASSIS
+
+    // 计算云台与底盘的夹角（弧度制）
+    float chassis_gimbal_diff = -Reference_Angle * PI / 180.0 + Chassis_Angle;
+    if (chassis_gimbal_diff <= 0)
+    {
+        chassis_gimbal_diff += 2 * PI;
+    }
+
+    // 将夹角信息存入JudgeReceiveData
+    if (abs(chassis_gimbal_diff)<=2*PI)
+        JudgeReceiveData.Chassis_Gimbal_Diff = chassis_gimbal_diff;
 
     // 底盘给云台发消息
     CAN_Chassis_Tx_Gimbal_Callback();

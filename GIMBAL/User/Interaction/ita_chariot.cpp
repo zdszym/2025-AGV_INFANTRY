@@ -229,17 +229,17 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
     */
     uint16_t flags;
     uint16_t tmp_gimbal_pitch;
-    uint16_t tmp_fric_omega_left ;
+    uint16_t tmp_fric_omega_left;
     uint16_t tmp_fric_omega_right;
-    flags = 
-    (uint16_t)Chassis.Get_Chassis_Control_Type() |
-    ((uint16_t)MiniPC.Get_Vision_Mode() << 2) |
-    ((uint16_t)Chassis.Sprint_Status << 3) |
-    ((uint16_t)Booster.Get_Booster_User_Control_Type() << 4) |
-    ((uint16_t)Gimbal.Get_Gimbal_Control_Type() << 5) |
-    ((uint16_t)MiniPC.Get_MiniPC_Status() << 7) |
-    ((uint16_t)Chassis.Get_Chassis_UI_Init_flag() << 8);
-    
+    flags =
+        (uint16_t)Chassis.Get_Chassis_Control_Type() |
+        ((uint16_t)MiniPC.Get_Vision_Mode() << 2) |
+        ((uint16_t)Chassis.Sprint_Status << 3) |
+        ((uint16_t)Booster.Get_Booster_User_Control_Type() << 4) |
+        ((uint16_t)Gimbal.Get_Gimbal_Control_Type() << 5) |
+        ((uint16_t)MiniPC.Get_MiniPC_Status() << 7) |
+        ((uint16_t)Chassis.Get_Chassis_UI_Init_flag() << 8);
+
     tmp_gimbal_pitch = Math_Float_To_Int(Gimbal.Motor_Pitch.Get_True_Angle_Pitch(), -30.0f, 30.0f, 0, 0x7FFF);
     tmp_fric_omega_left = (uint16_t)abs(Booster.Motor_Friction_Left.Get_Now_Omega());
     tmp_fric_omega_right = (uint16_t)abs(Booster.Motor_Friction_Right.Get_Now_Omega());
@@ -390,16 +390,16 @@ void Class_Chariot::Control_Gimbal()
         /*键盘控制*/
         if (Get_DR16_Control_Type() == DR16_Control_Type_KEYBOARD)
         {
+            if (DR16.Get_Keyboard_Key_V() == DR16_Key_Status_TRIG_FREE_PRESSED)
+            {
+                if (MiniPC.Get_Vision_Mode() == ARMOR_MODE)
+                    MiniPC.Set_Vision_Mode(WINDMILL_MODE);
+                else
+                    MiniPC.Set_Vision_Mode(ARMOR_MODE);
+            }
             // 切换自瞄手瞄
             if (DR16.Get_Mouse_Right_Key() == DR16_Key_Status_PRESSED)
             {
-                if (DR16.Get_Keyboard_Key_V() == DR16_Key_Status_PRESSED)
-                {
-                    if (MiniPC.Get_Vision_Mode() == ARMOR_MODE)
-                        MiniPC.Set_Vision_Mode(WINDMILL_MODE);
-                    else
-                        MiniPC.Set_Vision_Mode(ARMOR_MODE);
-                }
                 Gimbal.Set_Gimbal_Control_Type(Gimbal_Control_Type_MINIPC);
             }
             else if (DR16.Get_Mouse_Right_Key() == DR16_Key_Status_FREE)
@@ -518,23 +518,21 @@ void Class_Chariot::Control_Booster()
             }
 
             // 单发模式
-            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED&&Booster.Get_Friction_Control_Type()==Friction_Control_Type_ENABLE)
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_SINGLE && DR16.Get_Mouse_Left_Key() == DR16_Key_Status_TRIG_FREE_PRESSED && Booster.Get_Friction_Control_Type() == Friction_Control_Type_ENABLE)
             {
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_SINGLE);
             }
-			   // 连发
-            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI &&Booster.Get_Friction_Control_Type()==Friction_Control_Type_ENABLE)
+            // 连发
+            if (Booster.Get_Booster_User_Control_Type() == Booster_User_Control_Type_MULTI && Booster.Get_Friction_Control_Type() == Friction_Control_Type_ENABLE)
             {
-			if(DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
-                Booster.Set_Booster_Control_Type(Booster_Control_Type_REPEATED);
-			
-			 else
-            {
-                Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+                if (DR16.Get_Mouse_Left_Key() == DR16_Key_Status_PRESSED)
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_REPEATED);
+
+                else
+                {
+                    Booster.Set_Booster_Control_Type(Booster_Control_Type_CEASEFIRE);
+                }
             }
-            }
-           
-         
         }
         else if (Get_DR16_Control_Type() == DR16_Control_Type_REMOTE)
         {

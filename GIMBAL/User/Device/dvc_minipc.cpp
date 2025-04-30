@@ -14,7 +14,7 @@
 #include "dvc_minipc.h"
 #include "crt_gimbal.h"
 #include "drv_math.h"
-
+#include "drv_can.h"
 /* private macros ------------------------------------------------------------*/
 
 /* private types -------------------------------------------------------------*/
@@ -39,27 +39,54 @@ void Class_MiniPC::Init(Struct_USB_Manage_Object *__USB_Manage_Object, uint8_t _
 }
 
 /**
+ * @brief 迷你主机初始化,can
+ *
+ */
+void Class_MiniPC::Init(CAN_HandleTypeDef *hcan)
+{
+    if (hcan->Instance == CAN1)
+    {
+        CAN_Manage_Object = &CAN1_Manage_Object;
+        CAN_Tx_Data = CAN1_MiniPc_Tx_Data;
+    }
+    else if (hcan->Instance == CAN2)
+    {
+        CAN_Manage_Object = &CAN2_Manage_Object;
+        CAN_Tx_Data = CAN2_MiniPc_Tx_Data;
+    }
+}
+
+/**
  * @brief 数据处理过程
  *
  */
-float distance_booster_camera=0.04;
-float distance_yaw=-0.00f;
+float distance_booster_camera = 0.04;
+float distance_yaw = -0.00f;
 void Class_MiniPC::Data_Process()
 {
-    // memcpy(&Data_NUC_To_MCU, ((Struct_MiniPC_USB_Data *)USB_Manage_Object->Rx_Buffer)->Data, sizeof(Struct_MiniPC_Rx_Data));
-    memcpy(&Pack_Rx, (Pack_rx_t *)USB_Manage_Object->Rx_Buffer, USB_Manage_Object->Rx_Buffer_Length);
-
     float tmp_yaw, tmp_pitch;
+    if (MiniPC_Message_Flag == MiniPC_Can)
+    {
+        memcpy(&Can_Pack_Rx, (Can_Pack_Rx_t *)CAN_Manage_Object->Rx_Buffer.Data, sizeof(Can_Pack_Rx_t));
 
-    Self_aim(Pack_Rx.target_x-distance_yaw, Pack_Rx.target_y, Pack_Rx.target_z +distance_booster_camera, &Rx_Angle_Yaw, &Rx_Angle_Pitch, &Distance);
+        // 将CAN接收到的数据转换为实际值 (除以1000转换回浮点数)
+        float target_x = Can_Pack_Rx.target_x / 1000.0f;
+        float target_y = Can_Pack_Rx.target_y / 1000.0f;
+        float target_z = Can_Pack_Rx.target_z / 1000.0f;
 
-    //    Rx_Angle_Yaw = meanFilter(tmp_yaw);
-    //    Rx_Angle_Pitch = meanFilter(tmp_pitch);
-    // if(Pack_Rx.hander!=0xA5) memset(&Pack_Rx,0,USB_Manage_Object->Rx_Buffer_Length);
+        Self_aim(target_x, target_y, target_z + distance_booster_camera, &tmp_yaw, &tmp_pitch, &Distance);
+        Rx_Angle_Pitch = tmp_pitch;
+        Rx_Angle_Yaw = tmp_yaw;
+        Math_Constrain(&Rx_Angle_Pitch, -20.0f, 34.0f);
+    }
+    else
+    {
+        memcpy(&Usb_Pack_Rx, (Usb_Pack_Rx_t *)USB_Manage_Object->Rx_Buffer, USB_Manage_Object->Rx_Buffer_Length);
 
-    memset(USB_Manage_Object->Rx_Buffer, 0, USB_Manage_Object->Rx_Buffer_Length);
+        Self_aim(Usb_Pack_Rx.target_x - distance_yaw, Usb_Pack_Rx.target_y, Usb_Pack_Rx.target_z + distance_booster_camera, &Rx_Angle_Yaw, &Rx_Angle_Pitch, &Distance);
+        memset(USB_Manage_Object->Rx_Buffer, 0, USB_Manage_Object->Rx_Buffer_Length);
+    }
 }
-
 
 /**
  * @brief 迷你主机发送数据输出到usb发送缓冲区
@@ -67,25 +94,38 @@ void Class_MiniPC::Data_Process()
  */
 void Class_MiniPC::Output()
 {
-    Pack_Tx.hander = Frame_Header;
+    if (MiniPC_Message_Flag == MiniPC_Can)
+    {
+        // 设置发送数据
+        Can_Pack_Tx.game_stage = (Enum_Referee_Game_Status_Stage)Referee->Get_Game_Stage();
 
-    // 根据referee判断红蓝方
-    if (Referee->Get_ID() >= 101)
-        Pack_Tx.detect_color = 101; // 蓝方
+        Can_Pack_Tx.roll = (int16_t)(Tx_Angle_Roll * 100.0f);
+        Can_Pack_Tx.pitch = (int16_t)(Tx_Angle_Pitch * 100.0f);
+        Can_Pack_Tx.yaw = (int16_t)(Tx_Angle_Yaw * 100.0f);
+
+        // 直接将整个结构体复制到CAN发送缓冲区
+        memcpy(CAN_Tx_Data, &Can_Pack_Tx, sizeof(Can_Pack_Tx));
+    }
     else
-        Pack_Tx.detect_color = 0; // 红方
-
-    Pack_Tx.points_num = Get_Vision_Mode();
-    Pack_Tx.is_large_buff=0;
-    Pack_Tx.target_id = 0x01;
-    Pack_Tx.Game_Status_Stage = Referee->Get_Game_Stage();
-    Pack_Tx.roll = Tx_Angle_Roll;
-    Pack_Tx.pitch = Tx_Angle_Pitch;
-    Pack_Tx.yaw = Tx_Angle_Yaw;
-    Pack_Tx.crc16 = 0xffff;
-    memcpy(USB_Manage_Object->Tx_Buffer, &Pack_Tx, sizeof(Pack_Tx));
-    Append_CRC16_Check_Sum(USB_Manage_Object->Tx_Buffer, sizeof(Pack_Tx));
-    USB_Manage_Object->Tx_Buffer_Length = sizeof(Pack_Tx);
+    {
+        Usb_Pack_Tx.hander = Frame_Header;
+        // 根据referee判断红蓝方
+        if (Referee->Get_ID() >= 101)
+            Usb_Pack_Tx.detect_color = 101; // 蓝方
+        else
+            Usb_Pack_Tx.detect_color = 0; // 红方
+        Usb_Pack_Tx.points_num = Get_Vision_Mode();
+        Usb_Pack_Tx.is_large_buff = 0;
+        Usb_Pack_Tx.target_id = 0x01;
+        Usb_Pack_Tx.Game_Status_Stage = Referee->Get_Game_Stage();
+        Usb_Pack_Tx.roll = Tx_Angle_Roll;
+        Usb_Pack_Tx.pitch = Tx_Angle_Pitch;
+        Usb_Pack_Tx.yaw = Tx_Angle_Yaw;
+        Usb_Pack_Tx.crc16 = 0xffff;
+        memcpy(USB_Manage_Object->Tx_Buffer, &Usb_Pack_Tx, sizeof(Usb_Pack_Tx));
+        Append_CRC16_Check_Sum(USB_Manage_Object->Tx_Buffer, sizeof(Usb_Pack_Tx));
+        USB_Manage_Object->Tx_Buffer_Length = sizeof(Usb_Pack_Tx);
+    }
 }
 
 /**
@@ -106,7 +146,19 @@ void Class_MiniPC::TIM_Write_PeriodElapsedCallback()
 void Class_MiniPC::USB_RxCpltCallback(uint8_t *rx_data)
 {
     // 滑动窗口, 判断迷你主机是否在线
-    Flag += 1;
+    Usb_Flag += 1;
+    Data_Process();
+}
+
+/**
+ * @brief can通信接收回调函数
+ *
+ * @param rx_data 接收的数据
+ */
+void Class_MiniPC::CAN_RxCpltCallback(uint8_t *rx_data)
+{
+    // 滑动窗口, 判断迷你主机是否在线
+    Can_Flag += 1;
     Data_Process();
 }
 
@@ -117,7 +169,7 @@ void Class_MiniPC::USB_RxCpltCallback(uint8_t *rx_data)
 void Class_MiniPC::TIM1msMod50_Alive_PeriodElapsedCallback()
 {
     // 判断该时间段内是否接收过迷你主机数据
-    if (Flag == Pre_Flag)
+    if (Usb_Flag == Usb_Pre_Flag && Can_Flag == Can_Pre_Flag)
     {
         // 迷你主机断开连接
         MiniPC_Status = MiniPC_Status_DISABLE;
@@ -128,7 +180,8 @@ void Class_MiniPC::TIM1msMod50_Alive_PeriodElapsedCallback()
         MiniPC_Status = MiniPC_Status_ENABLE;
     }
 
-    Pre_Flag = Flag;
+    Usb_Pre_Flag = Usb_Flag;
+    Can_Pre_Flag = Can_Flag;
 }
 
 /**
@@ -297,15 +350,17 @@ float Class_MiniPC::calc_pitch(float x, float y, float z)
     // 使用重力加速度模型迭代更新俯仰角
     for (size_t i = 0; i < 20; i++)
     {
-        float v_x,v_y;
-        if(Referee->Referee_Status==Referee_Status_ENABLE&&Referee->Robot_Booster.Speed>15.0f){
-         v_x = Referee->Robot_Booster.Speed * cosf(pitch);
-         v_y = Referee->Robot_Booster.Speed * sinf(pitch);
+        float v_x, v_y;
+        if (Referee->Referee_Status == Referee_Status_ENABLE && Referee->Robot_Booster.Speed > 15.0f)
+        {
+            v_x = Referee->Robot_Booster.Speed * cosf(pitch);
+            v_y = Referee->Robot_Booster.Speed * sinf(pitch);
         }
-else{
-    v_x = bullet_v * cosf(pitch);
-    v_y = bullet_v * sinf(pitch);
-}
+        else
+        {
+            v_x = bullet_v * cosf(pitch);
+            v_y = bullet_v * sinf(pitch);
+        }
         float t = sqrtf(x * x + y * y) / v_x;
         float h = v_y * t - 0.5 * g * t * t;
         float dz = z - h;

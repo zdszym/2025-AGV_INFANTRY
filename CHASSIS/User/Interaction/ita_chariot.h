@@ -227,6 +227,7 @@ public:
 
     Enum_MiniPC_Type MiniPC_Type = MiniPC_Type_Nomal;
     Enum_Chassis_Control_Type Chassis_Control_Type = Chassis_Control_Type_DISABLE;
+    
     // 底盘云台通讯数据
 
     /*ui变量 */

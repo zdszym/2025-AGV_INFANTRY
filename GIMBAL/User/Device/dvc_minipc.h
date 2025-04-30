@@ -54,63 +54,6 @@ static const uint16_t W_CRC_TABLE[256] =
         0xf78f, 0xe606, 0xd49d, 0xc514, 0xb1ab, 0xa022, 0x92b9, 0x8330, 0x7bc7, 0x6a4e, 0x58d5, 0x495c,
         0x3de3, 0x2c6a, 0x1ef1, 0x0f78};
 
-struct Pack_tx_t
-{
-    uint8_t hander;
-    uint8_t Game_Status_Stage;
-    uint8_t points_num;
-	uint8_t is_large_buff;
-    uint8_t detect_color;
-    uint8_t target_id;
-    float roll;
-    float pitch;
-    float yaw;
-    uint16_t crc16;
-} __attribute__((packed));
-
-struct Pack_rx_t
-{
-    uint8_t hander;
-    float target_yaw;
-    float target_pitch;
-    float target_x;
-    float target_y;
-    float target_z;
-    // uint8_t auto_shoot_flag;    //0:进入遥控器状态后，不允许自动射击 1:进入自瞄状态后，允许遥控器控制射击
-    uint8_t UP_flag;
-    uint16_t crc16;
-} __attribute__((packed));
-
-/**
- * @brief 迷你主机状态
- *
- */
-enum Enum_MiniPC_Status
-{
-    MiniPC_Status_DISABLE = 0,
-    MiniPC_Status_ENABLE,
-};
-
-/**
- * @brief
- *
- */
-enum Enum_Vision_Mode
-{
-    ARMOR_MODE = 0,
-    WINDMILL_MODE,
-};
-
-/**
- * @brief 各种标签, 场地, 相关设施激活与存活状态
- *
- */
-enum Enum_MiniPC_Data_Status : uint8_t
-{
-    MiniPC_Data_Status_DISABLE = 0,
-    MiniPC_Data_Status_ENABLE,
-};
-
 /**
  * @brief 比赛阶段
  *
@@ -124,6 +67,91 @@ enum Enum_MiniPC_Game_Stage : uint8_t
     MiniPC_Game_Stage_BATTLE,
     MiniPC_Game_Stage_SETTLEMENT,
 };
+
+/**
+ * @brief
+ *
+ */
+enum Enum_Vision_Mode
+{
+    ARMOR_MODE = 0,
+    WINDMILL_MODE,
+};
+
+/**
+ * @brief 风车类型
+ *
+ */
+enum Enum_Windmill_Type : uint8_t
+{
+    Windmill_Type_Small = 0,
+    Windmill_Type_Big,
+};
+
+struct Usb_Pack_Tx_t
+{
+    uint8_t hander;
+    uint8_t Game_Status_Stage;
+    uint8_t points_num;
+    uint8_t is_large_buff;
+    uint8_t detect_color;
+    uint8_t target_id;
+    float roll;
+    float pitch;
+    float yaw;
+    uint16_t crc16;
+} __attribute__((packed));
+
+struct Usb_Pack_Rx_t
+{
+    uint8_t hander;
+    float target_yaw;
+    float target_pitch;
+    float target_x;
+    float target_y;
+    float target_z;
+    // uint8_t auto_shoot_flag;    //0:进入遥控器状态后，不允许自动射击 1:进入自瞄状态后，允许遥控器控制射击
+    uint8_t UP_flag;
+    uint16_t crc16;
+} __attribute__((packed));
+
+struct Can_Pack_Tx_t
+{
+    Enum_Referee_Game_Status_Stage game_stage : 3;
+    Enum_Vision_Mode target_type : 1;
+    Enum_Windmill_Type windmill_type : 1;
+    int16_t roll;
+    int16_t pitch;
+    int16_t yaw;
+} __attribute__((packed));
+
+struct Can_Pack_Rx_t
+{
+    int16_t target_x;
+    int16_t target_y;
+    int16_t target_z;
+} __attribute__((packed));
+
+/**
+ * @brief 迷你主机状态
+ *
+ */
+enum Enum_MiniPC_Status
+{
+    MiniPC_Status_DISABLE = 0,
+    MiniPC_Status_ENABLE,
+};
+
+/**
+ * @brief 各种标签, 场地, 相关设施激活与存活状态
+ *
+ */
+enum Enum_MiniPC_Data_Status : uint8_t
+{
+    MiniPC_Data_Status_DISABLE = 0,
+    MiniPC_Data_Status_ENABLE,
+};
+
 
 /**
  * @brief 战车运动控制方式
@@ -145,6 +173,11 @@ enum Enum_MiniPC_Self_Color : uint8_t
     MiniPC_Self_Color_BLUE,
 };
 
+enum Enum_MiniPC_Message_Flag : uint8_t
+{
+    MiniPC_Usb = 0,
+    MiniPC_Can,
+};
 /**
  * @brief 迷你主机源数据
  *
@@ -209,7 +242,7 @@ class Class_MiniPC
 {
 public:
     void Init(Struct_USB_Manage_Object *__MiniPC_USB_Manage_Object, uint8_t __frame_header = 0x5A, uint8_t __frame_rear = 0x01);
-
+    void Init(CAN_HandleTypeDef *hcan);
     inline Enum_MiniPC_Status Get_MiniPC_Status();
     inline float Get_Chassis_Target_Velocity_X();
     inline float Get_Chassis_Target_Velocity_Y();
@@ -242,7 +275,7 @@ public:
     inline void Set_Vision_Mode(Enum_Vision_Mode _Vision_Mode);
 
     inline void Set_auto_shoot_flag(uint8_t __auto_shoot_flag); // 设置自动射击标志位
-    inline uint8_t Get_auto_shoot_flag();                     // 获取自动射击标志位
+    inline uint8_t Get_auto_shoot_flag();                       // 获取自动射击标志位
     inline Enum_Vision_Mode Get_Vision_Mode();
 
     void Append_CRC16_Check_Sum(uint8_t *pchMessage, uint32_t dwLength);
@@ -260,6 +293,7 @@ public:
     float meanFilter(float input);
 
     void USB_RxCpltCallback(uint8_t *Rx_Data);
+    void CAN_RxCpltCallback(uint8_t *rx_data);
     void TIM1msMod50_Alive_PeriodElapsedCallback();
     void TIM_Write_PeriodElapsedCallback();
 
@@ -283,10 +317,19 @@ protected:
     // 内部变量
 
     // 当前时刻的迷你主机接收flag
-    uint32_t Flag = 0;
+    uint32_t Usb_Flag = 0;
     // 前一时刻的迷你主机接收flag
-    uint32_t Pre_Flag = 0;
+    uint32_t Usb_Pre_Flag = 0;
 
+    // 当前时刻的迷你主机接收flag
+    uint32_t Can_Flag = 0;
+    // 前一时刻的迷你主机接收flag
+    uint32_t Can_Pre_Flag = 0;
+
+    // 绑定的CAN
+    Struct_CAN_Manage_Object *CAN_Manage_Object;
+    // 发送缓存区
+    uint8_t *CAN_Tx_Data;
     // 读变量
 
     // 迷你主机状态
@@ -294,8 +337,13 @@ protected:
     // 迷你主机对外接口信息
     Struct_MiniPC_Rx_Data Data_NUC_To_MCU;
 
-    Pack_tx_t Pack_Tx;
-    Pack_rx_t Pack_Rx;
+    Usb_Pack_Tx_t Usb_Pack_Tx;
+    Usb_Pack_Rx_t Usb_Pack_Rx;
+
+    Can_Pack_Tx_t Can_Pack_Tx;
+    Can_Pack_Rx_t Can_Pack_Rx;
+
+    Enum_MiniPC_Message_Flag MiniPC_Message_Flag;
 
     Enum_Vision_Mode Vision_Mode = ARMOR_MODE;
 
@@ -330,14 +378,13 @@ protected:
 /* Exported function declarations --------------------------------------------*/
 void Class_MiniPC::Set_auto_shoot_flag(uint8_t __auto_shoot_flag)
 {
-    // Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
+    // Usb_Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
 }
 
 uint8_t Class_MiniPC::Get_auto_shoot_flag()
 {
-    // return (Pack_Rx.auto_shoot_flag);
+    // return (Usb_Pack_Rx.auto_shoot_flag);
 }
-
 
 float Class_MiniPC::Get_Rx_Pitch_Angle()
 {
@@ -653,8 +700,8 @@ void Class_MiniPC::Transform_Angle_Tx()
 
 void Class_MiniPC::Transform_Angle_Rx()
 {
-    Rx_Angle_Pitch = Pack_Rx.target_pitch;
-    Rx_Angle_Yaw = Pack_Rx.target_yaw;
+    Rx_Angle_Pitch = Usb_Pack_Rx.target_pitch;
+    Rx_Angle_Yaw = Usb_Pack_Rx.target_yaw;
 }
 
 #endif
