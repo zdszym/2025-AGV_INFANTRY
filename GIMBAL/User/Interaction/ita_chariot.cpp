@@ -484,6 +484,7 @@ void Class_Chariot::Control_Booster()
     {
         // 遥控器离线或下方失能
         Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+        Booster.Set_Friction_Control_Type(Friction_Control_Type_DISABLE);
 
         return;
     }
@@ -553,9 +554,14 @@ void Class_Chariot::Control_Booster()
                     Booster.Set_Booster_Control_Type(Booster_Control_Type_MULTI);
                     Shoot_Flag = 1;
                 }
+                Booster.Set_Friction_Control_Type(Friction_Control_Type_ENABLE);
             }
             if (DR16.Get_Right_Switch() == DR16_Switch_Status_MIDDLE)
+            {
+                Booster.Set_Friction_Control_Type(Friction_Control_Type_DISABLE);
                 Booster.Set_Booster_Control_Type(Booster_Control_Type_DISABLE);
+            }
+               
         }
     }
 }
