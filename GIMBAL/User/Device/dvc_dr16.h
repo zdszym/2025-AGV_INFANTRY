@@ -199,7 +199,7 @@ public:
     inline Enum_DR16_Key_Status Get_Keyboard_Key_V();
     inline Enum_DR16_Key_Status Get_Keyboard_Key_B();
     
-    inline float Get_Wheel();
+    inline float Get_Yaw();
 
     void UART_RxCpltCallback(uint8_t *Rx_Data);
     void TIM1msMod50_Alive_PeriodElapsedCallback();
@@ -557,7 +557,7 @@ Enum_DR16_Key_Status Class_DR16::Get_Keyboard_Key_B()
  *
  * @return float 遥控器拨轮状态
  */
-float Class_DR16::Get_Wheel()
+float Class_DR16::Get_Yaw()
 {
     return (Data.Wheel);
 }
