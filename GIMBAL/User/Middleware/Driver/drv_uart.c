@@ -12,7 +12,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "drv_uart.h"
-
+#include "usart.h"
 /* Private macros ------------------------------------------------------------*/
 
 /* Private types -------------------------------------------------------------*/
@@ -159,6 +159,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     {
         UART6_Manage_Object.Callback_Function(UART6_Manage_Object.Rx_Buffer, Size);
         HAL_UARTEx_ReceiveToIdle_DMA(huart, UART6_Manage_Object.Rx_Buffer, UART6_Manage_Object.Rx_Buffer_Length);
+        __HAL_DMA_DISABLE_IT(&hdma_usart6_rx,DMA_IT_HT); 
     }
 //    else if (huart->Instance == UART7)
 //    {
