@@ -36,6 +36,16 @@ typedef enum
 } Enum_FOLLOW_FLAG_E;
 
 /**
+ * @brief
+ *
+ */
+enum Enum_Chassis_Invert_Flag : uint8_t
+{
+    Chassis_Invert_OFF = 0,
+    Chassis_Invert_ON,
+};
+
+/**
  * @brief 底盘控制类型
  *
  */
@@ -105,7 +115,9 @@ public:
     inline float Get_Spin_Omega();
     inline float Get_Chassis_UI_Init_flag();
     inline Enum_SUPERCAP_FLAG_E Get_Supercap_State(void);
+    inline Enum_Chassis_Invert_Flag Get_Chassis_Invert_Flag(void);
 
+    inline void Set_Chassis_Invert_Flag(Enum_Chassis_Invert_Flag __Chassis_Invert_Flag);
     inline void Set_Chassis_Control_Type(Enum_Chassis_Control_Type __Chassis_Control_Type);
     inline void Set_Target_Velocity_X(float __Target_Velocity_X);
     inline void Set_Target_Velocity_Y(float __Target_Velocity_Y);
@@ -171,6 +183,7 @@ protected:
     Enum_FOLLOW_FLAG_E FOLLOW_FLAG = FOLLOW_ON;
     Enum_SUPERCAP_FLAG_E SUPERCAP_FLAG = SUPERCAP_OFF;
     Enum_UI_INIT_FLAG_E UI_INIT_FLAG = UI_INIT_OFF;
+    Enum_Chassis_Invert_Flag Chassis_Invert_Flag = Chassis_Invert_OFF;
     // 目标速度X
     float Target_Velocity_X = 0.0f;
     // 目标速度Y
@@ -235,6 +248,15 @@ const float VEL2RPM = 1.240168f;
 // 齿轮箱减速比;
 const float M3508_REDUCTION_RATIO = 13.733f;
 /* Exported function declarations --------------------------------------------*/
+Enum_Chassis_Invert_Flag Class_Tricycle_Chassis::Get_Chassis_Invert_Flag(void)
+{
+    return Chassis_Invert_Flag;
+}
+
+void Class_Tricycle_Chassis::Set_Chassis_Invert_Flag(Enum_Chassis_Invert_Flag __Chassis_Invert_Flag)
+{
+    Chassis_Invert_Flag = __Chassis_Invert_Flag;
+}
 
 void Class_Tricycle_Chassis::Set_Supercap_State(Enum_SUPERCAP_FLAG_E __SUPERCAP_FLAG)
 {

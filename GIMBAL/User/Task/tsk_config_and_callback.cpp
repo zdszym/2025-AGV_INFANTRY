@@ -376,7 +376,7 @@ void Task1ms_TIM5_Callback()
     if (start_flag == 1)
     {
         chariot.TIM_Calculate_PeriodElapsedCallback();
-        buzzer_setTask(&buzzer, BUZZER_CALIBRATED_PRIORITY);
+        // buzzer_setTask(&buzzer, BUZZER_CALIBRATED_PRIORITY);
 #ifdef GIMBAL
         chariot.FSM_Alive_Control.Reload_TIM_Status_PeriodElapsedCallback();
         chariot.FSM_Alive_Control_VT13.Reload_TIM_Status_PeriodElapsedCallback();

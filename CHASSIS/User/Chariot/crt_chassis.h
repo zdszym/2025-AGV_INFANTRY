@@ -44,6 +44,11 @@ enum Enum_Sprint_Status : uint8_t
     Sprint_Status_ENABLE,
 };
 
+enum Enum_Chassis_Invert_Flag : uint8_t
+{
+    Chassis_Invert_OFF = 0,
+    Chassis_Invert_ON,
+};
 
 /**
  * @brief 底盘控制类型

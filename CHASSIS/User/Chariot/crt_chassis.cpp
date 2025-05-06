@@ -275,7 +275,10 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
     Supercap.Set_Limit_Power(500);
     Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max());
 #else
-    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max());
+    Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
+    Power_Limit.Energy_Control();
+
+    Supercap.Set_Limit_Power(Referee->Get_Chassis_Power_Max() - Power_Limit.PID_Energy_Control.Get_Out());
     Supercap.Set_Supercap_Mode(Supercap_Mode_ENABLE);
     //__Sprint_Status=Sprint_Status_ENABLE;
     if (__Sprint_Status == Sprint_Status_ENABLE)
@@ -297,10 +300,9 @@ void Class_Tricycle_Chassis::TIM_Calculate_PeriodElapsedCallback(Enum_Sprint_Sta
         //     Power_Limit.Set_Max_Power(Referee->Get_Chassis_Power_Max()+fabs(Power_Limit.PID_Energy_Control.Get_Out())+5);
         // }
     }
-
+   
 #endif
-    Power_Limit.Set_True_Energy(Referee->Get_Chassis_Energy_Buffer());
-    Power_Limit.Energy_Control();
+
 
     Supercap.TIM_Supercap_PeriodElapsedCallback();
 

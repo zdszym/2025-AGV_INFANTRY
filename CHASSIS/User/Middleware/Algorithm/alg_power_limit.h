@@ -1,6 +1,6 @@
 /**
  * @file alg_power_limit.h
- * @author lez 
+ * @author lez
  * @brief 功率限制算法
  * @version 1.1
  * @date 2024-07-1 0.1 24赛季定稿
@@ -21,15 +21,15 @@
 
 /* Exported macros -----------------------------------------------------------*/
 
-#define RAD_TO_RPM              9.5493f
-#define CMD_CURRENT_TO_TORQUE   ((20.f/16384.f)*0.3f)   //计算出3508直驱输出轴转子和cmd电流的关系
-#define REDUATION               (3591.f/187.f)         //减速比
- 
+#define RAD_TO_RPM 9.5493f
+#define CMD_CURRENT_TO_TORQUE ((20.f / 16384.f) * 0.3f) // 计算出3508直驱输出轴转子和cmd电流的关系
+#define REDUATION (3591.f / 187.f)                      // 减速比
+
 class Class_DJI_Motor_C620;
 
 class Class_Power_Limit
 {
-    public:
+public:
     Class_PID PID_Energy_Control;
     inline void Set_Power_Limit(float __total_power_limit);
     inline void Set_Chassis_Buffer(float __buffer);
@@ -37,70 +37,69 @@ class Class_Power_Limit
     inline void Set_Supercap_Voltage(float __voltage);
     inline void Set_Supercap_Print_Flag(uint8_t __flag);
     inline void Set_True_Energy(float __true_energy);
-   inline void Set_Max_Power(float __max_power);
+    inline void Set_Max_Power(float __max_power);
     inline float Get_True_Max_Power();
     inline float Get_Max_Power();
     float Get_Torque_Current(uint8_t num);
 
     void Set_Motor(Class_DJI_Motor_C620 (&Motor)[4]);
-    //输出功率限制之后的电流到电机缓冲区
+    // 输出功率限制之后的电流到电机缓冲区
     void Output(Class_DJI_Motor_C620 (&Motor)[4]);
 
     void TIM_Adjust_PeriodElapsedCallback(Class_DJI_Motor_C620 (&Motor)[4]);
-    //void Set_Out();
-    //能量换初始化
+    // void Set_Out();
+    // 能量换初始化
     void Init();
-    //void Energy_Output();
+    // void Energy_Output();
     void Energy_Control();
-    protected:
 
+protected:
     float True_Max_Power;
     float Max_Power;
     float Limit_K = 1.0f;
     float Chassis_Buffer;
-    const float Min_Buffer = 10.0f; 
+    const float Min_Buffer = 10.0f;
     const float Protected_Buffer = 30.0f;
-    float Target_Energy=60;
-    //转矩系数 rad转rpm系数
-	float Toque_Coefficient = 1.99688994e-6f * (3591/187) / 13.93f;  // (20/16384)*(0.3)*(187/3591)/9.55
+    float Target_Energy = 30;
+    // 转矩系数 rad转rpm系数
+    float Toque_Coefficient = 1.99688994e-6f * (3591 / 187) / 13.93f; // (20/16384)*(0.3)*(187/3591)/9.55
 
-    //电机模型参数
-	float k1 = 1.3;		// k1 
-	float k2 = 0.015;		// k2 
-	float Alpha = 0.0f;
-    float Tansfer_Coefficient = 9.55f;  //转化系数 w*t/Tansfer_Coefficient
+    // 电机模型参数
+    float k1 = 1.3;   // k1
+    float k2 = 0.015; // k2
+    float Alpha = 0.0f;
+    float Tansfer_Coefficient = 9.55f; // 转化系数 w*t/Tansfer_Coefficient
 
-    //超电电量
+    // 超电电量
     float Supercap_Energy;
-    //超电电压
+    // 超电电压
     float Supercap_Voltage;
-    //超电冲刺标志
+    // 超电冲刺标志
     uint8_t Supercap_Print_Flag = 0;
 
-    //过程变量
+    // 过程变量
     float equation_a;
     float equation_b;
     float equation_c;
 
-    //四电机输入目标力矩电流
-    float Input_Torque_Current[4];  
-    //四电机输出目标力矩电流
-    float Output_Torque_Current[4];  
-    //四电机当前电流值
-    float Torque_Torque_Current_Now[4];  
-    //四电机当前角速度
-    float Omega[4];	 
-    //底盘总功率限制
-    float Total_Power_Limit;  
-    //底盘总预测功率
-    float Total_Predict_Power = 0;  
-    //预测功率
-    float Predict_Power[4]; 
-    //功率伸缩系数
-	float Power_Scale;  
-    //伸缩之后的功率限制
-	float Scaled_Give_Power[4];  
-
+    // 四电机输入目标力矩电流
+    float Input_Torque_Current[4];
+    // 四电机输出目标力矩电流
+    float Output_Torque_Current[4];
+    // 四电机当前电流值
+    float Torque_Torque_Current_Now[4];
+    // 四电机当前角速度
+    float Omega[4];
+    // 底盘总功率限制
+    float Total_Power_Limit;
+    // 底盘总预测功率
+    float Total_Predict_Power = 0;
+    // 预测功率
+    float Predict_Power[4];
+    // 功率伸缩系数
+    float Power_Scale;
+    // 伸缩之后的功率限制
+    float Scaled_Give_Power[4];
 
     float True_Energy;
 };
@@ -129,7 +128,7 @@ void Class_Power_Limit::Set_Chassis_Buffer(float __buffer)
  */
 void Class_Power_Limit::Set_Supercap_Enegry(float __energy)
 {
-   Supercap_Energy = __energy;
+    Supercap_Energy = __energy;
 }
 
 /**
@@ -158,16 +157,17 @@ inline void Class_Power_Limit::Set_True_Energy(float __true_energy)
 inline void Class_Power_Limit::Set_Max_Power(float __max_power)
 {
     Max_Power = __max_power;
+    True_Max_Power = Max_Power;
 }
 
 inline float Class_Power_Limit::Get_Max_Power()
 {
-    return Max_Power; 
+    return Max_Power;
 }
 
 inline float Class_Power_Limit::Get_True_Max_Power()
 {
-    return True_Max_Power; 
+    return True_Max_Power;
 }
 /* Exported types ------------------------------------------------------------*/
 

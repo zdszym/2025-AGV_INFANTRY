@@ -227,7 +227,7 @@ public:
 
     Enum_MiniPC_Type MiniPC_Type = MiniPC_Type_Nomal;
     Enum_Chassis_Control_Type Chassis_Control_Type = Chassis_Control_Type_DISABLE;
-    
+    Enum_Chassis_Invert_Flag Chassis_Invert_Flag = Chassis_Invert_OFF;
     // 底盘云台通讯数据
 
     /*ui变量 */
@@ -237,6 +237,9 @@ public:
     float Gimbal_Tx_Pitch_Angle = 0;
     float Fric_Omega_Left=0;
     float Fric_Omega_Right = 0;
+
+    uint16_t Shooted_Bullet = 0;//已发弹量
+    
 
 protected:
     // pitch控制状态 锁定和自由控制

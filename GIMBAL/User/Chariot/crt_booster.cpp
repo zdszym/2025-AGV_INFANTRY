@@ -38,8 +38,12 @@ void Class_FSM_Heat_Detect::Reload_TIM_Status_PeriodElapsedCallback()
     case (0):
     {
         // 正常状态
-
-        if (Booster->Motor_Friction_Right.Get_Now_Torque() >= Booster->Friction_Torque_Threshold)
+        float current_torque = Booster->Motor_Friction_Right.Get_Now_Torque();
+        
+        // 增加扭矩范围判断，只有在特定范围内才认为是发弹
+        // 发弹时扭矩在3000-4000范围内，开关摩擦轮时在15000-17000
+        if (current_torque >= Booster->Friction_Torque_Threshold && 
+            current_torque < 10000) // 设置上限，避免开关摩擦轮时误触发
         {
             // 大扭矩->检测状态
             Set_Status(1);

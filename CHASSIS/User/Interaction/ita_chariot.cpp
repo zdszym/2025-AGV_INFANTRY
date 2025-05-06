@@ -124,7 +124,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     UI_Gimbal_Flag = GIMBAL_FLAG_E((flags >> 5) & 0x3);
     MiniPC_Status = Enum_MiniPC_Status((flags >> 7) & 0x1);
     Referee_UI_Refresh_Status = Enum_Referee_UI_Refresh_Status((flags >> 8) & 0x1);
-    
+    Chassis_Invert_Flag = Enum_Chassis_Invert_Flag((flags >> 9) & 0x1);
 
     Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch, 0, 0x7fff, -30.0f, 30.0f);
     Fric_Omega_Left = tmp_fric_omega_left;
@@ -140,7 +140,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     }
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_ANTI_SPIN)
     {
-        chassis_omega = -PI * 2 * 0.6;
+        chassis_omega = -PI * 2 * 2;
     }
 
     else if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
@@ -592,6 +592,9 @@ float OptimizeAngle(float target_angle, float current_angle)
 
 void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
 {
+    static uint16_t remain_bullet_num = 0;
+    static uint16_t last_remain_bullet_num = 0;
+
 #ifdef CHASSIS
 
     // 计算云台与底盘的夹角（弧度制）
@@ -602,7 +605,7 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
     }
 
     // 将夹角信息存入JudgeReceiveData
-    if (abs(chassis_gimbal_diff)<=2*PI)
+    if (abs(chassis_gimbal_diff) <= 2 * PI)
         JudgeReceiveData.Chassis_Gimbal_Diff = chassis_gimbal_diff;
 
     // 底盘给云台发消息
@@ -610,10 +613,13 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
 
     if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_FLLOW)
     {
+
+        // float target_angle = Chassis_Invert_Flag == Chassis_Invert_OFF ? Reference_Angle : Reference_Angle + 180;
+        float target_angle = Chassis_Invert_Flag ==Reference_Angle;
         // 随动环
         Chassis_Angle = Motor_Yaw.Get_Now_Angle();
 
-        PID_Chassis_Follow.Set_Target(Reference_Angle);
+        PID_Chassis_Follow.Set_Target(target_angle);
         PID_Chassis_Follow.Set_Now(Chassis_Angle);
         PID_Chassis_Follow.TIM_Adjust_PeriodElapsedCallback();
 
@@ -652,6 +658,12 @@ void Class_Chariot::TIM_Calculate_PeriodElapsedCallback()
     __HAL_TIM_SetCompare(&htim1, TIM_CHANNEL_3, Compare);
 
 #endif
+    remain_bullet_num = Referee.Get_17mm_Remaining();
+    if (last_remain_bullet_num - remain_bullet_num>0)
+    {
+        Shooted_Bullet += last_remain_bullet_num - remain_bullet_num;
+    }
+    last_remain_bullet_num = remain_bullet_num;
 }
 
 /**
