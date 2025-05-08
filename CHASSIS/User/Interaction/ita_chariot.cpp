@@ -125,7 +125,7 @@ void Class_Chariot::CAN_Chassis_Rx_Gimbal_Callback_State(uint8_t *data)
     MiniPC_Status = Enum_MiniPC_Status((flags >> 7) & 0x1);
     Referee_UI_Refresh_Status = Enum_Referee_UI_Refresh_Status((flags >> 8) & 0x1);
     Chassis_Invert_Flag = Enum_Chassis_Invert_Flag((flags >> 9) & 0x1);
-
+    Antispin_Type = Enum_Antispin_Type((flags >> 10) & 0x1);
     Gimbal_Tx_Pitch_Angle = Math_Int_To_Float(tmp_gimbal_pitch, 0, 0x7fff, -30.0f, 30.0f);
     Fric_Omega_Left = tmp_fric_omega_left;
     Fric_Omega_Right = tmp_fric_omega_right;

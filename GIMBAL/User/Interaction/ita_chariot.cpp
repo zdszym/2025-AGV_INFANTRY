@@ -246,7 +246,8 @@ void Class_Chariot::CAN_Gimbal_TxCpltCallback()
         ((uint16_t)Gimbal.Get_Gimbal_Control_Type() << 5) |
         ((uint16_t)MiniPC.Get_MiniPC_Status() << 7) |
         ((uint16_t)Chassis.Get_Chassis_UI_Init_flag() << 8) |
-        ((uint16_t)Chassis.Get_Chassis_Invert_Flag() << 9);
+        ((uint16_t)Chassis.Get_Chassis_Invert_Flag() << 9) |
+        ((uint16_t)MiniPC.Get_Antispin_Type() << 10);
 
     tmp_gimbal_pitch = Math_Float_To_Int(Gimbal.Motor_Pitch.Get_True_Angle_Pitch(), -30.0f, 30.0f, 0, 0x7FFF);
     tmp_fric_omega_left = (uint16_t)abs(Booster.Motor_Friction_Left.Get_Now_Omega());
@@ -383,10 +384,10 @@ void Class_Chariot::Control_Chassis()
                 Chassis.Sprint_Status = Sprint_Status_DISABLE;
                 Chassis.Set_Supercap_State(SUPERCAP_OFF);
             }
-		if(Chassis.Get_Chassis_Control_Type()==Chassis_Control_Type_DISABLE)
-		{
-			Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_FLLOW);
-		}
+            if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
+            {
+                Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_FLLOW);
+            }
 
             if (DR16.Get_Keyboard_Key_A() == DR16_Key_Status_PRESSED) // x轴
             {
@@ -436,10 +437,10 @@ void Class_Chariot::Control_Chassis()
                 Chassis.Sprint_Status = Sprint_Status_DISABLE;
                 Chassis.Set_Supercap_State(SUPERCAP_OFF);
             }
-		if(Chassis.Get_Chassis_Control_Type()==Chassis_Control_Type_DISABLE)
-		{
-			Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_FLLOW);
-		}
+            if (Chassis.Get_Chassis_Control_Type() == Chassis_Control_Type_DISABLE)
+            {
+                Chassis.Set_Chassis_Control_Type(Chassis_Control_Type_FLLOW);
+            }
             if (VT13.Get_Keyboard_Key_A() == VT13_Key_Status_PRESSED) // x轴
             {
                 gimbal_velocity_x -= Chassis.Get_Velocity_X_Max();
@@ -599,13 +600,25 @@ void Class_Chariot::Control_Gimbal()
             // V键按下 自瞄模式中切换四点和五点模式
             if (DR16.Get_Keyboard_Key_V() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
-                if (Gimbal.MiniPC->Get_Vision_Mode() == WINDMILL_MODE)
+                if (Gimbal.MiniPC->Get_MiniPC_Type() == MiniPC_Type_Windmill)
                 {
-                    Gimbal.MiniPC->Set_Vision_Mode(ARMOR_MODE);
+                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Nomal);
                 }
                 else
                 {
-                    Gimbal.MiniPC->Set_Vision_Mode(WINDMILL_MODE);
+                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Windmill);
+                }
+            }
+            // Z键按下 切换反小陀螺开关
+            if (DR16.Get_Keyboard_Key_Z() == DR16_Key_Status_TRIG_FREE_PRESSED)
+            {
+                if (Gimbal.MiniPC->Get_Antispin_Type() == Antispin_On)
+                {
+                    Gimbal.MiniPC->Set_Antispin_Type(Antispin_Off);
+                }
+                else
+                {
+                    Gimbal.MiniPC->Set_Antispin_Type(Antispin_On);
                 }
             }
         }
@@ -650,16 +663,28 @@ void Class_Chariot::Control_Gimbal()
                     Chassis.Set_Chassis_Invert_Flag(Chassis_Invert_OFF);
                 }
             }
-            // V键按下 自瞄模式中切换四点和五点模式
-            if (VT13.Get_Keyboard_Key_V() == VT13_Key_Status_TRIG_FREE_PRESSED)
+            // Z键按下 切换反小陀螺开关
+            if (VT13.Get_Keyboard_Key_Z() == VT13_Key_Status_TRIG_FREE_PRESSED)
             {
-                if (Gimbal.MiniPC->Get_Vision_Mode() == WINDMILL_MODE)
+                if (Gimbal.MiniPC->Get_Antispin_Type() == Antispin_On)
                 {
-                    Gimbal.MiniPC->Set_Vision_Mode(ARMOR_MODE);
+                    Gimbal.MiniPC->Set_Antispin_Type(Antispin_Off);
                 }
                 else
                 {
-                    Gimbal.MiniPC->Set_Vision_Mode(WINDMILL_MODE);
+                    Gimbal.MiniPC->Set_Antispin_Type(Antispin_On);
+                }
+            }
+            // V键按下 自瞄模式中切换四点和五点模式
+            if (VT13.Get_Keyboard_Key_V() == VT13_Key_Status_TRIG_FREE_PRESSED)
+            {
+                if (Gimbal.MiniPC->Get_MiniPC_Type() == MiniPC_Type_Windmill)
+                {
+                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Nomal);
+                }
+                else
+                {
+                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Windmill);
                 }
             }
         }

@@ -88,6 +88,15 @@ enum Enum_Windmill_Type : uint8_t
     Windmill_Type_Big,
 };
 
+/**
+反小陀螺开/关 默认是开
+*/
+enum Enum_Antispin_Type : uint8_t
+{
+    Antispin_Off = 0,
+    Antispin_On,
+};
+
 struct Usb_Pack_Tx_t
 {
     uint8_t hander;
@@ -120,6 +129,7 @@ struct Can_Pack_Tx_t
     Enum_Referee_Game_Status_Stage game_stage : 3;
     Enum_Vision_Mode target_type : 1;
     Enum_Windmill_Type windmill_type : 1;
+    Enum_Antispin_Type Antispin_Type : 1;
     int16_t roll;
     int16_t pitch;
     int16_t yaw;
@@ -258,6 +268,9 @@ public:
     inline float Get_Rx_Pitch_Angle();
     inline float Get_Rx_Yaw_Angle();
     inline Enum_MiniPC_Move_Control_Mode Get_Move_Control_Mode();
+    Enum_Antispin_Type Class_MiniPC::Get_Antispin_Type();
+
+    inline void Class_MiniPC::Set_Antispin_Type(Enum_Antispin_Type __Antispin_Type);
 
     inline void Set_Game_Stage(Enum_MiniPC_Game_Stage __Game_Stage);
     inline void Set_Chassis_Now_Velocity_X(float __Chassis_Now_Velocity_X);
@@ -344,7 +357,7 @@ protected:
     Can_Pack_Rx_t Can_Pack_Rx;
 
     Enum_MiniPC_Message_Flag MiniPC_Message_Flag;
-
+    Enum_Antispin_Type Antispin_Type = Antispin_On;
     Enum_Vision_Mode Vision_Mode = ARMOR_MODE;
 
     float Tx_Angle_Roll;
@@ -379,6 +392,16 @@ protected:
 void Class_MiniPC::Set_auto_shoot_flag(uint8_t __auto_shoot_flag)
 {
     // Usb_Pack_Rx.auto_shoot_flag = __auto_shoot_flag;
+}
+
+Enum_Antispin_Type Class_MiniPC::Get_Antispin_Type()
+{
+    return (Antispin_Type);
+}
+
+void Class_MiniPC::Set_Antispin_Type(Enum_Antispin_Type __Antispin_Type)
+{
+    Antispin_Type = __Antispin_Type;
 }
 
 uint8_t Class_MiniPC::Get_auto_shoot_flag()

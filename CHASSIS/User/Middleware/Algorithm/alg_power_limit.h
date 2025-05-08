@@ -157,7 +157,6 @@ inline void Class_Power_Limit::Set_True_Energy(float __true_energy)
 inline void Class_Power_Limit::Set_Max_Power(float __max_power)
 {
     Max_Power = __max_power;
-    True_Max_Power = Max_Power;
 }
 
 inline float Class_Power_Limit::Get_Max_Power()

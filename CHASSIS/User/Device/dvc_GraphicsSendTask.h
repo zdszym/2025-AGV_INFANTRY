@@ -196,6 +196,8 @@ typedef struct
 	uint8_t Booster_User_Control_Type;
 	uint16_t booster_fric_omega_left;
 	uint16_t booster_fric_omega_right;
+	uint16_t shooted_bullet;
+	uint8_t antispin_type;
 	float Supercap_Voltage;
 	float Pitch_Angle;
 	float Chassis_Gimbal_Diff;

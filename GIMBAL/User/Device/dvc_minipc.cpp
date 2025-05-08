@@ -54,6 +54,7 @@ void Class_MiniPC::Init(CAN_HandleTypeDef *hcan)
         CAN_Manage_Object = &CAN2_Manage_Object;
         CAN_Tx_Data = CAN2_MiniPc_Tx_Data;
     }
+    Can_Pack_Tx.Antispin_Type = Antispin_On;
 }
 
 /**
@@ -98,7 +99,7 @@ void Class_MiniPC::Output()
     {
         // 设置发送数据
         Can_Pack_Tx.game_stage = (Enum_Referee_Game_Status_Stage)Referee->Get_Game_Stage();
-
+        Can_Pack_Tx.Antispin_Type = (Enum_Antispin_Type)Antispin_Type;
         Can_Pack_Tx.roll = (int16_t)(Tx_Angle_Roll * 100.0f);
         Can_Pack_Tx.pitch = (int16_t)(Tx_Angle_Pitch * 100.0f);
         Can_Pack_Tx.yaw = (int16_t)(Tx_Angle_Yaw * 100.0f);

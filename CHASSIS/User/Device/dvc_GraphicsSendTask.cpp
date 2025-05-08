@@ -14,8 +14,8 @@
 #define CAP_GRAPHIC_NUM 9 // 超级电容的电量显示细分个数
 #define Robot_ID 46
 unsigned char JudgeSend[SEND_MAX_SIZE];
-JudgeReceive_t JudgeReceiveData;
 JudgeReceive_t Last_JudgeReceiveData;
+JudgeReceive_t JudgeReceiveData;
 // extern SuperPower superpower;
 F405_typedef F405;
 #define Robot_ID 46
@@ -806,6 +806,57 @@ void MiniPCMode_Draw(uint8_t Init_Cnt)
 		break;
 	}
 }
+/**********************************************************************************************************
+ *函 数 名: Antispin_Draw
+ *功能说明: 显示是否开启反小陀螺UI显示
+ *形    参: 初始化标志
+ *返 回 值: 无
+ **********************************************************************************************************/
+void Antispin_Draw(uint8_t Init_Cnt)
+{
+	static uint8_t AntispinTypeName[] = "atn";
+	static uint8_t optype;
+	static uint8_t On[] = "ON  ";
+	static uint8_t Off[] = "OFF";
+
+	optype = (Init_Cnt == 0) ? Op_Change : Op_Add;
+
+	switch (JudgeReceiveData.antispin_type)
+	{
+	case 0: // MiniPC_Mode_ARMOR
+		Char_Draw(0, optype, 0.9 * SCREEN_LENGTH, 0.65 * SCREEN_WIDTH, 20, sizeof(Off), 2, Green, AntispinTypeName, Off);
+		break;
+	case 1: // MiniPC_Mode_WINDMILL
+		Char_Draw(0, optype, 0.9 * SCREEN_LENGTH, 0.65 * SCREEN_WIDTH, 20, sizeof(On), 2, Orange, AntispinTypeName, On);
+		break;
+	default:
+		Char_Draw(0, optype, 0.9 * SCREEN_LENGTH, 0.65 * SCREEN_WIDTH, 20, sizeof(On), 2, Green, AntispinTypeName, On);
+		break;
+	}
+}
+
+void BulletNum_Draw(uint16_t bullet_num, uint8_t Init_Cnt)
+{
+	static uint8_t BulletNumName[] = "bun"; // 数值的独立名称
+	static uint16_t last_bullet_num = 0;
+	uint8_t optype = (Init_Cnt == 0) ? Op_Change : Op_Add;
+
+	// 恢复条件更新逻辑，确保数值变化时才更新显示
+	if (bullet_num != last_bullet_num || Init_Cnt > 0)
+	{
+		// 将整数转换为字符串
+		uint8_t num_str[8];
+		snprintf((char *)num_str, sizeof(num_str), "%d", bullet_num);
+
+		Char_Draw(0, optype,
+				  0.9 * SCREEN_LENGTH, 0.60 * SCREEN_WIDTH, // 数值位置 (X, Y)
+				  20, strlen((char *)num_str), 2,
+				  Green, BulletNumName, num_str);
+	}
+
+	// 更新记录的值
+	last_bullet_num = bullet_num;
+}
 
 /**********************************************************************************************************
  *函 数 名: GraphicSendtask
@@ -853,7 +904,8 @@ void GraphicSendtask(void)
 		GimbalStatus_Draw(Init_Cnt);
 		RadarDoubleDamage_Draw(Init_Cnt);
 		MiniPCMode_Draw(Init_Cnt); // 添加MiniPC模式初始化
-
+		Antispin_Draw(Init_Cnt);
+		BulletNum_Draw(JudgeReceiveData.shooted_bullet, Init_Cnt);
 		Init_Cnt--;
 
 		Char_Init();	   // 字符
@@ -930,6 +982,24 @@ void GraphicSendtask(void)
 			last_update_time = current_time;
 			break;
 		}
+		if (Last_JudgeReceiveData.antispin_type != JudgeReceiveData.antispin_type)
+		{
+
+			ui_state = UI_STATE_STATUS_UPDATE;
+			last_status_type = 7;
+			status_update_retry = 0;
+			last_update_time = current_time;
+			break;
+		}
+		if (Last_JudgeReceiveData.shooted_bullet != JudgeReceiveData.shooted_bullet)
+		{
+
+			ui_state = UI_STATE_STATUS_UPDATE;
+			last_status_type = 8;
+			status_update_retry = 0;
+			last_update_time = current_time;
+			break;
+		}
 
 		// 如果没有状态变化，且距离上次数值更新已经过去足够时间，则进入数值更新状态
 		if (current_time - last_update_time > 10) // 10ms更新一次数值
@@ -966,6 +1036,14 @@ void GraphicSendtask(void)
 		case 6: // MiniPC模式
 			MiniPCMode_Draw(0);
 			Last_JudgeReceiveData.Minipc_Mode = JudgeReceiveData.Minipc_Mode;
+			break;
+		case 7:
+			Antispin_Draw(0);
+			Last_JudgeReceiveData.antispin_type = JudgeReceiveData.antispin_type;
+			break;
+		case 8:
+			BulletNum_Draw(JudgeReceiveData.shooted_bullet, 0);
+			Last_JudgeReceiveData.shooted_bullet = JudgeReceiveData.shooted_bullet;
 			break;
 		}
 

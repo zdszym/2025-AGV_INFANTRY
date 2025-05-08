@@ -520,6 +520,8 @@ extern "C" void Task_Loop()
         JudgeReceiveData.Gimbal_Control_Type = chariot.UI_Gimbal_Flag;
         JudgeReceiveData.Booster_User_Control_Type = chariot.UI_Fric_Flag;
         JudgeReceiveData.Minipc_Mode = chariot.MiniPC_Type;
+        JudgeReceiveData.antispin_type = chariot.Antispin_Type;
+        JudgeReceiveData.shooted_bullet = chariot.Shooted_Bullet;
         if (chariot.Referee_UI_Refresh_Status == Referee_UI_Refresh_Status_ENABLE)
             Init_Cnt = 10;
 

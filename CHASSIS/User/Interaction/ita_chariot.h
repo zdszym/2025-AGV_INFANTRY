@@ -231,6 +231,7 @@ public:
     // 底盘云台通讯数据
 
     /*ui变量 */
+    Enum_Antispin_Type Antispin_Type = Antispin_On;
     GIMBAL_FLAG_E UI_Gimbal_Flag = UI_Gimbal_Control_Type_DISABLE;
     Enum_Booster_User_Control_Type UI_Fric_Flag = Booster_User_Control_Type_SINGLE;
     Enum_SUPERCAP_FLAG_E Supercap_Flag = SUPERCAP_OFF;

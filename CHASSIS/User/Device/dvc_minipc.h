@@ -232,7 +232,14 @@ struct Pack_rx_t
 	uint16_t crc16;
 }__attribute__((packed));
 
-
+/**
+反小陀螺开/关 默认是开
+*/
+enum Enum_Antispin_Type : uint8_t
+{
+    Antispin_Off = 0,
+    Antispin_On,
+};
 /**
  * @brief Specialized, 迷你主机类
  *
