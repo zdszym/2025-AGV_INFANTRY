@@ -162,7 +162,6 @@ enum Enum_MiniPC_Data_Status : uint8_t
     MiniPC_Data_Status_ENABLE,
 };
 
-
 /**
  * @brief 战车运动控制方式
  *
@@ -268,7 +267,7 @@ public:
     inline float Get_Rx_Pitch_Angle();
     inline float Get_Rx_Yaw_Angle();
     inline Enum_MiniPC_Move_Control_Mode Get_Move_Control_Mode();
-    Enum_Antispin_Type Class_MiniPC::Get_Antispin_Type();
+    inline Enum_Antispin_Type Class_MiniPC::Get_Antispin_Type();
 
     inline void Class_MiniPC::Set_Antispin_Type(Enum_Antispin_Type __Antispin_Type);
 

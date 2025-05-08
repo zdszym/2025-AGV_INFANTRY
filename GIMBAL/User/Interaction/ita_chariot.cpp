@@ -600,13 +600,13 @@ void Class_Chariot::Control_Gimbal()
             // V键按下 自瞄模式中切换四点和五点模式
             if (DR16.Get_Keyboard_Key_V() == DR16_Key_Status_TRIG_FREE_PRESSED)
             {
-                if (Gimbal.MiniPC->Get_MiniPC_Type() == MiniPC_Type_Windmill)
+                if (Gimbal.MiniPC->Get_Vision_Mode() == ARMOR_MODE)
                 {
-                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Nomal);
+                    Gimbal.MiniPC->Set_Vision_Mode(WINDMILL_MODE);
                 }
                 else
                 {
-                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Windmill);
+                    Gimbal.MiniPC->Set_Vision_Mode(ARMOR_MODE);
                 }
             }
             // Z键按下 切换反小陀螺开关
@@ -678,13 +678,13 @@ void Class_Chariot::Control_Gimbal()
             // V键按下 自瞄模式中切换四点和五点模式
             if (VT13.Get_Keyboard_Key_V() == VT13_Key_Status_TRIG_FREE_PRESSED)
             {
-                if (Gimbal.MiniPC->Get_MiniPC_Type() == MiniPC_Type_Windmill)
+                if (Gimbal.MiniPC->Get_Vision_Mode() == ARMOR_MODE)
                 {
-                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Nomal);
+                    Gimbal.MiniPC->Set_Vision_Mode(WINDMILL_MODE);
                 }
                 else
                 {
-                    Gimbal.MiniPC->Set_MiniPC_Type(MiniPC_Type_Windmill);
+                    Gimbal.MiniPC->Set_Vision_Mode(ARMOR_MODE);
                 }
             }
         }
